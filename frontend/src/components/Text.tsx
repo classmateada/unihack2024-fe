@@ -13,9 +13,7 @@ const Text = () => {
           <AvatarFallback>CB</AvatarFallback>
         </Avatar>
         <div className="bg-neutral-600 text-white p-4 rounded-lg">
-          {`
           Hey, how was your day User?
-        `}
         </div>
       </div>
       <div className="flex space-x-4 items-start mt-4 self-end">
