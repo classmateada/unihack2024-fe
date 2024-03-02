@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import TextToVoice from "../components/TextToVoice";
+import TextToVoice from '../components/TextToVoice';
+import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: "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", // This is the default and can be omitted
+  apiKey: "", // This is the default and can be omitted
 });
 
 // Define the props type for Settings
@@ -22,6 +23,9 @@ const Settings: React.FC<SettingsProps> = ({
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
 
+  const [questionArr, setQuestionArr] = useState([]);
+  const [answerArr, setAnswerArr] = useState([]);
+
   //   Voice to text code
   const [isRecording, setIsRecording] = useState(false);
   const [isBtnRecordDisabled, setIsBtnRecordDisabled] = useState(true);
@@ -31,6 +35,29 @@ const Settings: React.FC<SettingsProps> = ({
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const [speaking, setSpeaking] = useState("hidden");
+
+//   const handleFinishInterview = async () => {
+//     // Post our answer to the last question
+//     const url = "http://127.0.0.1:5000/rating";
+//     const qa_chain = questionArr.reduce((prev, curr, idx) => {
+//         return [...prev, curr, answerArr[idx]];
+//     }, [])
+    
+//     const options = {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         "conversation": qa_chain 
+//       }),
+//     };
+
+//     // Get response and next question, should be based on previous q&a
+//     const resultPromise = await fetch(url, options);
+//     const rating = await resultPromise.text();
+//     setResponseText(rating)
+//   };
 
   const stopRecording = async () => {
     // Disable the button
@@ -103,7 +130,12 @@ const Settings: React.FC<SettingsProps> = ({
     setIsBtnRecordDisabled(false);
   };
 
-  const getQuestion = async (prevQuest, prevAns) => {
+  const getNextQuestion = async (prevQuest, prevAns) => {
+    // add new  q&as  with history of q&as
+    const newAnswers = [...answerArr, prevAns];
+    const newQuestions = [...questionArr, prevQuest];
+
+    // Post our answer to the last question
     const url = "http://127.0.0.1:5000/question";
     const options = {
       method: "POST",
@@ -111,20 +143,27 @@ const Settings: React.FC<SettingsProps> = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "prev-question": prevQuest,
-        "prev-answer": prevAns,
+        "prev-question": newQuestions,
+        "prev-answer": newAnswers,
       }),
     };
+
+    // Get response and next question, should be based on previous q&a
     const resultPromise = await fetch(url, options);
     const question = await resultPromise.text();
+
+    // Save history
+    setAnswerArr(newAnswers);
+    setQuestionArr(newQuestions);
     return question;
   };
 
   useEffect(() => {
     if (userAnswer !== "") {
+      // Essentially answer loop, we got the answer to the question we asked
       console.log("userAnswer:", userAnswer);
       console.log("==> getting question useeffect");
-      getQuestion(responseText, userAnswer).then((question) => {
+      getNextQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
         setSpeaking("block");
       });
@@ -188,6 +227,12 @@ const Settings: React.FC<SettingsProps> = ({
     );
   };
 
+  const navigate = useNavigate()
+
+  const goToFeedbackPage=()=>{
+    navigate("/feedback");
+  }
+  
   return (
     <div className="bg-[#1a1a1a] p-8 ml-10">
       <div className="mt-4">
