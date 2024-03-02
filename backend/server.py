@@ -44,6 +44,7 @@ def greeting():
 #     "prev-answer": "Sorry, I can't think of anything"
 #     "company": "amazon"
 # }
+# look into company folder and use filename as company values
 # output:
 # No problem! Can you describe a situation where you had to persuade a team member to see things from your perspective?
 @app.route('/question', methods=['POST'])
