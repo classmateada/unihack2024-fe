@@ -4,7 +4,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: "", // This is the default and can be omitted
+  apiKey: "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", // This is the default and can be omitted
 });
 
 const Settings = () => {
@@ -13,14 +13,18 @@ const Settings = () => {
 
   //   Voice to text code
   const [isRecording, setIsRecording] = useState(false);
+  const [isBtnRecordDisabled, setIsBtnRecordDisabled] = useState(true);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(
     null
   );
   const [transcriptLength, setTranscriptLength] = useState(0);
   const [blobArr, setBlobArr] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const stopRecording = async () => {
+    // Disable the button
+    setIsBtnRecordDisabled(true);
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
@@ -31,19 +35,19 @@ const Settings = () => {
     // console.log(audioBuf)
     // const myReadableStream = bufferToStream(audioBuf);
     if (blobArr.length !== 0) {
-        const file = new File(blobArr, "audio.mp3", { type: "audio/mp3" });
-        
-        const transcription = await openai.audio.transcriptions.create({
-          file: file,
-          model: "whisper-1",
-        });
-        
-        console.log(transcription);
-        console.log(transcription.text);
-        setUserAnswer(transcription.text)
-        setBlobArr([])
+      const file = new File(blobArr, "audio.mp3", { type: "audio/mp3" });
+
+      const transcription = await openai.audio.transcriptions.create({
+        file: file,
+        model: "whisper-1",
+      });
+
+      console.log(transcription);
+      console.log(transcription.text);
+      setUserAnswer(transcription.text);
+      setBlobArr([]);
     } else {
-        setUserAnswer("...")
+      setUserAnswer("...");
     }
   };
 
@@ -91,6 +95,7 @@ const Settings = () => {
     } catch (error) {
       console.error("Error accessing media devices:", error);
     }
+    setIsBtnRecordDisabled(false);
   };
 
   const getQuestion = async (prevQuest, prevAns) => {
@@ -111,8 +116,8 @@ const Settings = () => {
   };
 
   useEffect(() => {
-    if (userAnswer !== '') {
-        console.log("userAnswer:", userAnswer)
+    if (userAnswer !== "") {
+      console.log("userAnswer:", userAnswer);
       console.log("==> getting question useeffect");
       getQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
@@ -126,6 +131,7 @@ const Settings = () => {
   };
 
   const handleStartInterview = () => {
+    console.log("Interview Started");
     const url = "http://127.0.0.1:5000/greeting";
 
     const options = {
@@ -146,6 +152,9 @@ const Settings = () => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+
+    // Disable the button
+    setIsButtonDisabled(true);
   };
 
   return (
@@ -172,18 +181,22 @@ const Settings = () => {
       <div className="mt-8 flex space-x-4 justify-end">
         <button
           onClick={handleStartInterview}
-          className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]"
+          className="btn text-white bg-[#2e2e2e] hover:bg-[#363636] disabled:bg-[#575757] disabled:text-gray-400"
+          disabled={isButtonDisabled}
         >
           Start interview
         </button>
-        <button className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
-          Stop interview
+        <button
+          className="btn text-white bg-[#2e2e2e] hover:bg-[#363636] disabled:bg-[#575757] disabled:text-gray-400"
+          onClick={stopRecording}
+          disabled={isBtnRecordDisabled}
+        >
+          Stop Recording
         </button>
       </div>
       {responseText && (
         <TextToVoice text={responseText} handleEnd={handleEndText} />
       )}
-      <button onClick={stopRecording}>I'm done</button>
     </div>
   );
 };
