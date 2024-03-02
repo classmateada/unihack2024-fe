@@ -12,44 +12,47 @@ const Person = () => {
   const audioRef = useRef(new MediaRecorder(new MediaStream()));
 
   const toggleMic = () => {
-    setIsMicOn(!isMicOn);
+    // Toggle the state immediately to reflect the UI change.
+    setIsMicOn((currentState) => !currentState);
 
-    if (!isMicOn) {
-      // When turning the mic on
+    // Now act based on the new state.
+    if (isMicOn) {
+      // If the microphone was on, we now want to stop the recording.
+      if (isRecording && audioRef.current) {
+        audioRef.current.stop(); // Stop the media recorder.
+        setIsRecording(false);
+
+        // Stop all the tracks on the stream.
+        audioRef.current.stream.getTracks().forEach((track) => track.stop());
+      }
+    } else {
+      // If the microphone was off, we now want to start the recording.
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
-          if (!isRecording) {
-            audioRef.current = new MediaRecorder(stream);
-            audioRef.current.start();
-            setIsRecording(true);
+          // Create a new media recorder with the stream.
+          audioRef.current = new MediaRecorder(stream);
+          audioRef.current.start();
+          setIsRecording(true);
 
-            const chunks: BlobPart[] = []; // Define the type of chunks explicitly
-            audioRef.current.ondataavailable = (e) => {
-              chunks.push(e.data);
-            };
+          const chunks: BlobPart[] = []; // Define the type for chunks.
+          audioRef.current.ondataavailable = (e) => {
+            chunks.push(e.data);
+          };
 
-            audioRef.current.ondataavailable = (e) => {
-              chunks.push(e.data);
-            };
+          audioRef.current.onstop = () => {
+            const audioBlob = new Blob(chunks, {
+              type: "audio/ogg; codecs=opus",
+            });
+            setAudioBlob(audioBlob);
 
-            audioRef.current.onstop = () => {
-              const audioBlob = new Blob(chunks, {
-                type: "audio/ogg; codecs=opus",
-              });
-              setAudioBlob(audioBlob);
-            };
-          }
+            // Stop all the tracks on the stream after we're done recording.
+            stream.getTracks().forEach((track) => track.stop());
+          };
         })
         .catch((err) => {
           console.error("Failed to get audio stream", err);
         });
-    } else {
-      // When turning the mic off
-      if (isRecording) {
-        audioRef.current.stop();
-        setIsRecording(false);
-      }
     }
   };
 
@@ -81,6 +84,20 @@ const Person = () => {
   };
   const getCamIcon = () => {
     return isCamOn ? "/Cam.png" : "/CamOff.png";
+  };
+
+  // Download the audio recording
+  const downloadAudio = () => {
+    if (audioBlob) {
+      const url = URL.createObjectURL(audioBlob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = "recording.ogg";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   return (
@@ -125,6 +142,11 @@ const Person = () => {
           <AvatarFallback>Interviewer</AvatarFallback>
         </Avatar>
         <div className="text-white">Cat Interviewer</div>
+        <div className="flex space-x-10">
+          <button className="btn glass btn-circle" onClick={downloadAudio}>
+            <img src={getMicIcon()} alt="Mic" />
+          </button>
+        </div>
       </div>
     </div>
   );
