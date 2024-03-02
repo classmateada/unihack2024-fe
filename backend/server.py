@@ -28,7 +28,6 @@ def greeting():
     )
 
     greetings = cutoffRole(greetings_completion.choices[0].message.content)
-    print(greetings)
     return greetings
 
 @app.route('/question', methods=['POST'])
