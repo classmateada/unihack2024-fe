@@ -48,16 +48,32 @@ def greeting():
 @app.route('/question', methods=['POST'])
 def question():
     data = request.json
+    print("==> data:", data)
+
+    qa_size = len(data["prev-question"])
+    
+    qa_list = []
+    for i in range(qa_size):
+        qa_list.append({"role": "assistant", "content": data["prev-question"][i]})
+        qa_list.append({"role": "user", "content": data["prev-answer"][i]})
+    
+    print("messages=", [
+            {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation)"},
+            *qa_list
+        ])
+    # return 'Tell me about a time when you had to deal with a difficult coworker.'
     question_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation)"},
-            {"role": "assistant", "content": data["prev-question"]},
-            {"role": "user", "content": data["prev-answer"]}
+            *qa_list
+            # {"role": "assistant", "content": data["prev-question"]},
+            # {"role": "user", "content": data["prev-answer"]}
         ]
     )
 
     question = cutoffRole(question_completion.choices[0].message.content)
+    print("==> question:",question)
     return question
 
 # Given the whole conversation (as a list) starting from the greeting of the interviewer, returns a rating of the interviewee.

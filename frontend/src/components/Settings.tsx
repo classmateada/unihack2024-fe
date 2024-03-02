@@ -12,39 +12,61 @@ const Settings = () => {
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
 
+  const [questionArr, setQuestionArr] = useState([]);
+  const [answerArr, setAnswerArr] = useState([]);
+
   //   Voice to text code
   const [isRecording, setIsRecording] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(
-    null
-  );
-  const [transcriptLength, setTranscriptLength] = useState(0);
+
   const [blobArr, setBlobArr] = useState([]);
+
+//   const handleFinishInterview = async () => {
+//     // Post our answer to the last question
+//     const url = "http://127.0.0.1:5000/rating";
+//     const qa_chain = questionArr.reduce((prev, curr, idx) => {
+//         return [...prev, curr, answerArr[idx]];
+//     }, [])
+    
+//     const options = {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         "conversation": qa_chain 
+//       }),
+//     };
+
+//     // Get response and next question, should be based on previous q&a
+//     const resultPromise = await fetch(url, options);
+//     const rating = await resultPromise.text();
+//     setResponseText(rating)
+//   };
 
   const stopRecording = async () => {
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
     setIsRecording(false);
-    clearInterval(timerInterval!);
     console.log("Recording stopped");
 
     // console.log(audioBuf)
     // const myReadableStream = bufferToStream(audioBuf);
     if (blobArr.length !== 0) {
-        const file = new File(blobArr, "audio.mp3", { type: "audio/mp3" });
-        
-        const transcription = await openai.audio.transcriptions.create({
-          file: file,
-          model: "whisper-1",
-        });
-        
-        console.log(transcription);
-        console.log(transcription.text);
-        setUserAnswer(transcription.text)
-        setBlobArr([])
+      const file = new File(blobArr, "audio.mp3", { type: "audio/mp3" });
+
+      const transcription = await openai.audio.transcriptions.create({
+        file: file,
+        model: "whisper-1",
+      });
+
+      console.log(transcription);
+      console.log(transcription.text);
+      setUserAnswer(transcription.text);
+      setBlobArr([]);
     } else {
-        setUserAnswer("...")
+      setUserAnswer("...");
     }
   };
 
@@ -72,12 +94,6 @@ const Settings = () => {
         return alert("Browser not supported");
       }
 
-      setTimerInterval(
-        setInterval(() => {
-          setTranscriptLength((t) => t + 1);
-        }, 1000)
-      );
-
       const recorder = new MediaRecorder(destination.stream, {
         mimeType: mimeTypes[0],
       });
@@ -94,7 +110,12 @@ const Settings = () => {
     }
   };
 
-  const getQuestion = async (prevQuest, prevAns) => {
+  const getNextQuestion = async (prevQuest, prevAns) => {
+    // add new  q&as  with history of q&as
+    const newAnswers = [...answerArr, prevAns];
+    const newQuestions = [...questionArr, prevQuest];
+
+    // Post our answer to the last question
     const url = "http://127.0.0.1:5000/question";
     const options = {
       method: "POST",
@@ -102,20 +123,27 @@ const Settings = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "prev-question": prevQuest,
-        "prev-answer": prevAns,
+        "prev-question": newQuestions,
+        "prev-answer": newAnswers,
       }),
     };
+
+    // Get response and next question, should be based on previous q&a
     const resultPromise = await fetch(url, options);
     const question = await resultPromise.text();
+
+    // Save history
+    setAnswerArr(newAnswers);
+    setQuestionArr(newQuestions);
     return question;
   };
 
   useEffect(() => {
-    if (userAnswer !== '') {
-        console.log("userAnswer:", userAnswer)
+    if (userAnswer !== "") {
+      // Essentially answer loop, we got the answer to the question we asked
+      console.log("userAnswer:", userAnswer);
       console.log("==> getting question useeffect");
-      getQuestion(responseText, userAnswer).then((question) => {
+      getNextQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
       });
     }
