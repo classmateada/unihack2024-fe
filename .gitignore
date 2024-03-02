@@ -2,3 +2,4 @@
 backend/.env
 venv
 pyvenv
+frontend/.env

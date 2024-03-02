@@ -7,6 +7,7 @@ interface TextToSpeechProps {
 
 function TextToSpeech({ text, handleEnd }: TextToSpeechProps) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
   const lastText = useRef("");
 
   useEffect(() => {
