@@ -101,35 +101,42 @@ const Person = ({ callInterviewer }: { callInterviewer: string }) => {
   return (
     <>
       <div className="bg-[#262626] rounded-md flex flex-row justify-center p-28 space-x-6">
-        <div className="bg-[#605E5E] p-7 rounded-lg flex flex-col items-center space-y-6 w-[30vw]">
+        <div className="flex flex-col items-center space-y-6">
           {/* Conditional rendering based on camera status */}
           {isCamOn ? (
-            <video
-              ref={videoRef}
-              autoPlay
-              className="h-[10vw] scale-[1.3] w-auto rounded-sm mt-4 mb-2"
-            />
-          ) : (
-            <div className="bg-[#D9D9D9] p-3 rounded-full mt-4">
-              <Avatar>
-                <AvatarImage
-                  alt="User"
-                  src="/User.png"
-                  className="h-[6vw] w-auto"
-                />
-                <AvatarFallback>User</AvatarFallback>
-              </Avatar>
+            <div className="relative flex flex-col items-center">
+              <video ref={videoRef} autoPlay className="w-[30vw] rounded-lg" />
+
+              {/* Overlay icon */}
+              <div className="absolute bottom-0 mb-6 flex justify-center w-full">
+                <button className="btn glass btn-circle" onClick={toggleCam}>
+                  <img src={getCamIcon()} alt="Cam" />
+                </button>
+              </div>
             </div>
-          )}
-          <div className="text-white">User</div>
-          <div className="flex space-x-10">
-            {/* <button className="btn glass btn-circle" onClick={toggleMic}>
+          ) : (
+            <div className="bg-[#605E5E] p-7 rounded-lg flex flex-col items-center space-y-6 w-[30vw] h-[35vh]">
+              <div className="bg-[#D9D9D9] p-3 rounded-full mt-4">
+                <Avatar>
+                  <AvatarImage
+                    alt="User"
+                    src="/User.png"
+                    className="h-[6vw] w-auto"
+                  />
+                  <AvatarFallback>User</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="text-white">User</div>
+              <div className="flex space-x-10">
+                {/* <button className="btn glass btn-circle" onClick={toggleMic}>
               <img src={getMicIcon()} alt="Mic" />
             </button> */}
-            <button className="btn glass btn-circle" onClick={toggleCam}>
-              <img src={getCamIcon()} alt="Cam" />
-            </button>
-          </div>
+                <button className="btn glass btn-circle" onClick={toggleCam}>
+                  <img src={getCamIcon()} alt="Cam" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div
