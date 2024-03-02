@@ -1,17 +1,12 @@
-<<<<<<< HEAD
-import { useState } from 'react';
 import TextToVoice from '../components/TextToVoice';
 import { useNavigate } from "react-router-dom"
-=======
-import React, { useEffect, useState } from "react";
-import TextToVoice from "../components/TextToVoice";
+import { useEffect, useState } from "react";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
   apiKey: "", // This is the default and can be omitted
 });
->>>>>>> f2872b4c169594a5aa8d6529c3016dfb52e8ee20
 
 const Settings = () => {
   const [responseText, setResponseText] = useState("");
