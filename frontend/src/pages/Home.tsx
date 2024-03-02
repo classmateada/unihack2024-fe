@@ -7,8 +7,10 @@ export default function Home() {
     <div>
       <div>
         <Person />
-        <div className="grid grid-cols-2 px-14">
-          <Text />
+        <div className="grid grid-cols-2 px-14 ">
+          <div className="overflow-y-auto h-80">
+            <Text />
+          </div>
           <Settings />
         </div>
       </div>
