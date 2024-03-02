@@ -24,6 +24,8 @@ export default function Feedback() {
         <div className = "flex justify-center">
           <DataChart/>
         </div>
+        <div className = "flex justify-center">
+        </div>
     </div>
   );
 }

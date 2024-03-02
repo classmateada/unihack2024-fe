@@ -36,7 +36,7 @@ const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ name, value, 
 
   return (
     <div className = "flex flex-col justify-center items-center cursor-pointer ${isOpen ? 'cursor-default' : ''}`"
-        style={{ width: '300px'}}
+        style={{ width: '300px', marginTop: isOpen ? '20px' : '0'}}
         onClick={handleToggleTextBox}
         >
         <h1 className="mb-4 text-3xl font-bold text-blue-500 text-center"> {name} </h1>

@@ -8,6 +8,7 @@ interface TextToSpeechProps {
 function TextToSpeech({ text }: TextToSpeechProps) {
     // States
     const [isPaused, setIsPaused] = useState(false);
+    const [isReady, setIsReady] = useState(false);
     const [utterance, setUtterance] = useState(null);
     const [voice, setVoice] = useState(null);
 
@@ -19,12 +20,22 @@ function TextToSpeech({ text }: TextToSpeechProps) {
         setUtterance(u);
         setVoice(voices[2]);
 
+        setIsReady(true);
+
         return () => {
         synth.cancel();
         };
     }, [text]);
 
+    useEffect(() => {
+      if (isReady) {
+          handlePlay();
+      }
+  }, [isReady]);
+
     const handlePlay = () => {
+        if (!isReady) return;
+
         const synth = window.speechSynthesis;
 
         if (isPaused) {
@@ -57,9 +68,9 @@ function TextToSpeech({ text }: TextToSpeechProps) {
 
     return (
       <div>
-       <button onClick={handlePlay}>{isPaused ? "Resume" : "Play"}</button>
+       {/* <button onClick={handlePlay}>{isPaused ? "Resume" : "Play"}</button>
        <button onClick={handlePause}>Pause</button>
-       <button onClick={handleStop}>Stop</button>
+       <button onClick={handleStop}>Stop</button> */}
      </div>
     );
   }
