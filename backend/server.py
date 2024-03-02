@@ -42,6 +42,7 @@ def greeting():
 # {
 #     "prev-question": "That's great to hear! Can you share a time when you had to work under pressure to meet a deadline?",
 #     "prev-answer": "Sorry, I can't think of anything"
+#     "company": "amazon"
 # }
 # output:
 # No problem! Can you describe a situation where you had to persuade a team member to see things from your perspective?
@@ -57,7 +58,7 @@ def question():
     question_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation). Use the following examples of questions to base the question you ask.\n" + company_preprompt},
+            {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation). Use the following examples of questions to base the question you ask very closely.\n" + company_preprompt},
             {"role": "assistant", "content": data["prev-question"]},
             {"role": "user", "content": data["prev-answer"]}
         ]
