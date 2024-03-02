@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import TextToVoice from "../components/TextToVoice";
+import TextToVoice from '../components/TextToVoice';
+import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -148,6 +149,12 @@ const Settings = () => {
       });
   };
 
+  const navigate = useNavigate()
+
+  const goToFeedbackPage=()=>{
+    navigate("/feedback");
+  }
+  
   return (
     <div className="bg-[#1a1a1a] p-8 ml-10">
       <div className="mt-4">
@@ -176,7 +183,7 @@ const Settings = () => {
         >
           Start interview
         </button>
-        <button className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
+        <button onClick={() => goToFeedbackPage()} className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
           Stop interview
         </button>
       </div>
