@@ -86,20 +86,6 @@ const Person = () => {
     return isCamOn ? "/Cam.png" : "/CamOff.png";
   };
 
-  // Download the audio recording
-  const downloadAudio = () => {
-    if (audioBlob) {
-      const url = URL.createObjectURL(audioBlob);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = "recording.ogg";
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-    }
-  };
-
   return (
     <>
       <div className="bg-[#333333] rounded-md flex flex-row justify-center p-20 space-x-6">
@@ -143,11 +129,6 @@ const Person = () => {
             <AvatarFallback>Interviewer</AvatarFallback>
           </Avatar>
           <div className="text-white">Cat Interviewer</div>
-          <div className="justify-center">
-            <button className="btn btn-outline mt-4" onClick={downloadAudio}>
-              Download mic recording
-            </button>
-          </div>
         </div>
       </div>
     </>

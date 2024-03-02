@@ -23,6 +23,9 @@ function TextToSpeech({ text }: TextToSpeechProps) {
   }, [text]);
 
   const handlePlay = () => {
+    setCountdownStart(true); // Start countdown
+    setCountdownKey((prevKey) => prevKey + 1); // Increment key to restart countdown
+
     const synth = window.speechSynthesis;
 
     if (utterance && voice) {
@@ -35,17 +38,15 @@ function TextToSpeech({ text }: TextToSpeechProps) {
       }
 
       setIsPaused(false);
-      setCountdownStart(true); // Start countdown
-      setCountdownKey((prevKey) => prevKey + 1); // Increment key to restart countdown
     }
   };
 
   const handleStop = () => {
+    setCountdownStart(false); // Stop countdown
+    setCountdownKey(0);
     const synth = window.speechSynthesis;
     synth.cancel(); // Stop speech synthesis
     setIsPaused(false);
-    setCountdownStart(false); // Stop countdown
-    setCountdownKey(0);
   };
 
   // Renderer for when the countdown completes
