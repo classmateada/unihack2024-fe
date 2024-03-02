@@ -92,7 +92,7 @@ def rating():
         ]
     )
 
-    rating = cutoffRole(rating_completion.choices[0].message.content)
+    rating = rating_completion.choices[0].message.content
     return rating
 
 
