@@ -2,10 +2,10 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from flask import Flask, request
-from flask_cors import CORS
+
 
 app = Flask(__name__)
-CORS(app)
+
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -48,10 +48,16 @@ def greeting():
 @app.route('/question', methods=['POST'])
 def question():
     data = request.json
+    
+    
+    with open("company/"+data["company"]+'.txt', 'r') as file:
+        company_preprompt = file.read()
+    
+    print(company_preprompt)
     question_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation)"},
+            {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation). Use the following examples of questions to base the question you ask.\n" + company_preprompt},
             {"role": "assistant", "content": data["prev-question"]},
             {"role": "user", "content": data["prev-answer"]}
         ]
