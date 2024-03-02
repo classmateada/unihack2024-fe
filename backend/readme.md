@@ -8,6 +8,7 @@ Create a .env file in backend folder, enter your open api key in the .env file l
 ## Venv
 To create and activate venv in root folder:
 > python -m venv venv
+
 > venv\Scripts\activate
 
 ## Requirements

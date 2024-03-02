@@ -48,23 +48,27 @@ def rating():
     conversation = data["conversation"]
     for i in range(0, len(conversation)):
         if i%2 == 0:
-            conversation[i] += "Interviewer: "
+            conversation[i] = "Interviewer: " + conversation[i]
         else:
-            conversation[i] += "User: "
+            conversation[i] = "User: " + conversation[i]
 
-    res = [
-            {"role": "system", "content": ""}
-        ] + msgs
-    print(res)
+    str_convo = ""
+    for convo in conversation:
+        str_convo += "\n" + convo
+    
+    
+    print(str_convo)
     rating_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {}
+            {"role": "system", "content": "Look at the following behavioural interview given by the user and then rate it out of 5 for each of the following catagories.\n 1. relevance: whether the response directly address the question asked?\n 2. clarity: is the response clear and understandable?\n 3. depth: does the response demonstrate a deep understanding of the topic or situation?\n 4. examples: do they provide specific examples or experiences to support their response?\n You must give a score for all catagories."},
+            {"role": "user", "content": str_convo}
         ]
     )
 
     rating = cutoffRole(rating_completion.choices[0].message.content)
     return rating
+
 
 if __name__ == '__main__':
     app.run(debug=True)
