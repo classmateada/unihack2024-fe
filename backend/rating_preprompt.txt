@@ -1,0 +1,13 @@
+Look at the following behavioural interview given by the user and then rate it out of 5 for each of the following catagories.
+
+1. relevance: whether the response directly address the question asked?
+2. clarity: is the response clear and understandable?
+3. depth: does the response demonstrate a deep understanding of the topic or situation?
+4. examples: do they provide specific examples or experiences to support their response?
+
+You must give a score for all catagories and only those catagories.
+Here is an example of the output should look like:
+1. relevance: 1/5 (The response does not directly address the questions asked)
+2. clarity: 3/5 (The responses are clear and understandable)
+3. depth: 1/5 (The responses lack depth and do not demonstrate a deep understanding of the topics)
+4. examples: 1/5 (No specific examples or experiences are provided to support the responses)

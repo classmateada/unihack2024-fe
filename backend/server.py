@@ -8,6 +8,12 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 
+
+with open('rating_preprompt.txt', 'r') as file:
+    rating_preprompt = file.read()
+
+
+
 def cutoffRole(message):
     prefix = "Interviewer: "
     if message.startswith(prefix):
@@ -15,6 +21,7 @@ def cutoffRole(message):
     else:
         return message
 
+# GET request that provides a greeting from interviewer
 @app.route('/greeting', methods=['GET'])
 def greeting():
     greetings_completion = client.chat.completions.create(
@@ -27,6 +34,14 @@ def greeting():
     greetings = cutoffRole(greetings_completion.choices[0].message.content)
     return greetings
 
+# Given the most recent dialog, endpoint returns a response to the user and a behavioural question.
+# Example input:
+# {
+#     "prev-question": "That's great to hear! Can you share a time when you had to work under pressure to meet a deadline?",
+#     "prev-answer": "Sorry, I can't think of anything"
+# }
+# output:
+# No problem! Can you describe a situation where you had to persuade a team member to see things from your perspective?
 @app.route('/question', methods=['POST'])
 def question():
     data = request.json
@@ -42,6 +57,16 @@ def question():
     question = cutoffRole(question_completion.choices[0].message.content)
     return question
 
+# Given the whole conversation (as a list) starting from the greeting of the interviewer, returns a rating of the interviewee.
+# Example input:
+# {
+#         "conversation": ["Hello! Thank you for coming in today.", "Thank you, I am happy to", "That's great to hear! Can you share a time when you had to work under pressure to meet a deadline?", "Sorry, I can't think of anything", "No problem! Can you describe a situation where you had to persuade a team member to see things from your perspective?", "Can't think of anything again"]
+# }
+# output as string:
+# 1. relevance: 1/5 (The responses do not directly address the questions asked)
+# 2. clarity: 5/5 (The responses are clear and understandable)
+# 3. depth: 1/5 (The responses lack depth and do not demonstrate a deep understanding of the topics)
+# 4. examples: 1/5 (No specific examples or experiences are provided to support the responses)
 @app.route('/rating', methods=['POST'])
 def rating():
     data = request.json
@@ -55,13 +80,11 @@ def rating():
     str_convo = ""
     for convo in conversation:
         str_convo += "\n" + convo
-    
-    
-    print(str_convo)
+
     rating_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "Look at the following behavioural interview given by the user and then rate it out of 5 for each of the following catagories.\n 1. relevance: whether the response directly address the question asked?\n 2. clarity: is the response clear and understandable?\n 3. depth: does the response demonstrate a deep understanding of the topic or situation?\n 4. examples: do they provide specific examples or experiences to support their response?\n You must give a score for all catagories."},
+            {"role": "system", "content": rating_preprompt},
             {"role": "user", "content": str_convo}
         ]
     )
