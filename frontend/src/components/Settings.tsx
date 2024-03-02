@@ -11,11 +11,13 @@ const openai = new OpenAI({
 interface SettingsProps {
   setSelectedOption: (value: string) => void;
   setCountdownStart: React.Dispatch<React.SetStateAction<boolean>>;
+  setCallInterviewer: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Settings: React.FC<SettingsProps> = ({
   setSelectedOption,
   setCountdownStart,
+  setCallInterviewer,
 }) => {
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
@@ -137,6 +139,7 @@ const Settings: React.FC<SettingsProps> = ({
   const handleStartInterview = () => {
     console.log("Interview Started");
     setCountdownStart(true);
+    setCallInterviewer("block flex flex-col");
 
     const url = "http://127.0.0.1:5000/greeting";
 

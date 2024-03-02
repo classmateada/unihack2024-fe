@@ -1,7 +1,8 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import cn from "./cn";
 
-const Person = () => {
+const Person = ({ callInterviewer }: { callInterviewer: string }) => {
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCamOn, setIsCamOn] = useState(false);
 
@@ -10,6 +11,17 @@ const Person = () => {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef(new MediaRecorder(new MediaStream()));
+
+  const [opacityClass, setOpacityClass] = useState("opacity-40");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setOpacityClass("opacity-100");
+    }, 3000); // 3 second delay
+
+    // Cleanup timeout if the component is unmounted within 1 second
+    return () => clearTimeout(timer);
+  }, []); // Empty dependency array means this effect runs once on mount
 
   const toggleMic = () => {
     // Toggle the state immediately to reflect the UI change.
@@ -119,7 +131,13 @@ const Person = () => {
             </button>
           </div>
         </div>
-        <div className="bg-[#605E5E] p-10 rounded-lg flex flex-col items-center space-y-2 w-[30vw]">
+
+        <div
+          className={cn(
+            callInterviewer,
+            `bg-[#605E5E] p-10 rounded-lg items-center space-y-2 w-[30vw] duration-0 ${opacityClass}`
+          )}
+        >
           <Avatar>
             <AvatarImage
               alt="Interviewer"

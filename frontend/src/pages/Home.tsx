@@ -7,14 +7,20 @@ import Countdown from "react-countdown";
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [countdownStart, setCountdownStart] = useState(false);
+  const [callInterviewer, setCallInterviewer] = useState<string>("hidden");
 
   // Renderer for when the countdown completes
-  const Completionist = () => <span>Times up!</span>;
+  const Completionist = () => {
+    // Set the state to hide the interviewer call-to-action
+    setCallInterviewer("hidden");
+    // Return the completion message or component
+    return <span>Time's up!</span>;
+  };
 
   return (
     <div>
       <div>
-        <Person />
+        <Person callInterviewer={callInterviewer} />
         <div className="grid grid-cols-2 px-14 ">
           <div className="overflow-y-auto h-80">
             <Text selectedOption={selectedOption} />
@@ -23,6 +29,7 @@ export default function Home() {
           <Settings
             setSelectedOption={setSelectedOption}
             setCountdownStart={setCountdownStart}
+            setCallInterviewer={setCallInterviewer}
           />
           <div className="absolute top-[95%] right-[6rem] text-xl flex flex-row">
             <svg
@@ -54,7 +61,9 @@ export default function Home() {
                     );
                   }
                 }}
-              />
+              >
+                {/* Navigate to feedback when countdown done! */}
+              </Countdown>
             ) : (
               <p>15:00</p>
             )}
