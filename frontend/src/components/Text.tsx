@@ -68,24 +68,26 @@ const Text = ({ selectedOption }: { selectedOption: string }) => {
           setIsLoading(false);
         });
     } else {
-      console.log("Select a company before starting interview");
-      setIsLoading(true);
+      if (inputValue.trim() !== "") {
+        console.log("Select a company before starting interview");
+        setIsLoading(true);
 
-      axios
-        .post(url, data, { headers: headers })
-        .then((response) => {
-          console.log(response);
-          setChatLog((prevChatLog) => [
-            ...prevChatLog,
-            {
-              type: "bot",
-              message: "Select a company before starting interview",
-            },
-          ]);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+        axios
+          .post(url, data, { headers: headers })
+          .then((response) => {
+            console.log(response);
+            setChatLog((prevChatLog) => [
+              ...prevChatLog,
+              {
+                type: "bot",
+                message: "Select a company before starting interview",
+              },
+            ]);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }
     }
   };
 
