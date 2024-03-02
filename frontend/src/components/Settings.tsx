@@ -1,4 +1,5 @@
 import TextToSpeech from "../TextToVoice/TextToVoice";
+import Countdown from "react-countdown";
 
 // Define the props type for Settings
 interface SettingsProps {
@@ -6,6 +7,9 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ setSelectedOption }) => {
+  // Countdown component
+  const Completionist = () => <span>Times up!</span>;
+
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value);
     console.log(event.target.value);
@@ -37,7 +41,6 @@ const Settings: React.FC<SettingsProps> = ({ setSelectedOption }) => {
           </button>
         </div> */}
       </div>
-
       <TextToSpeech text={"Hey, how was your day today?"} />
     </div>
   );
