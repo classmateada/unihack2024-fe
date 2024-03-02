@@ -45,18 +45,22 @@ def question():
 @app.route('/rating', methods=['POST'])
 def rating():
     data = request.json
-    msgs = [{"role": "assistant", "content": conversation} for conversation in data["conversation"]]
-    for i in range(0, len(msgs)):
-        if i%2 == 1:
-            msgs[i]["role"] = "user"
+    conversation = data["conversation"]
+    for i in range(0, len(conversation)):
+        if i%2 == 0:
+            conversation[i] += "Interviewer: "
+        else:
+            conversation[i] += "User: "
 
     res = [
-            {"role": "system", "content": "Give a rating out of 10 on how well they did and why they recieved that result. (##IMPORTANT Do not ask anymore questions and don't add any punctuation)"}
+            {"role": "system", "content": ""}
         ] + msgs
     print(res)
     rating_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=res
+        messages=[
+            {}
+        ]
     )
 
     rating = cutoffRole(rating_completion.choices[0].message.content)
