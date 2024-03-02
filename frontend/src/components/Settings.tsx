@@ -21,8 +21,12 @@ const Settings = () => {
         </div>
       </div>
       <div className="mt-8 flex space-x-4 justify-end">
-        <button className="btn text-white bg-[#2e2e2e]">Start interview</button>
-        <button className="btn text-white bg-[#2e2e2e]">Stop interview</button>
+        <button className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
+          Start interview
+        </button>
+        <button className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
+          Stop interview
+        </button>
       </div>
     </div>
   );
