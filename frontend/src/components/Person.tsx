@@ -1,12 +1,35 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const Person = () => {
   const [isMicOn, setIsMicOn] = useState(true);
-  const [isCamOn, setIsCamOn] = useState(true);
+  const [isCamOn, setIsCamOn] = useState(false);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const toggleMic = () => setIsMicOn(!isMicOn);
-  const toggleCam = () => setIsCamOn(!isCamOn);
+  const toggleCam = () => {
+    setIsCamOn(!isCamOn);
+
+    if (!isCamOn) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to get video stream", err);
+        });
+    } else {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+        tracks.forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+    }
+  };
 
   const getMicIcon = () => {
     return isMicOn ? "/Mic.png" : "/MicOff.png";
@@ -19,10 +42,15 @@ const Person = () => {
     <div className="bg-[#333333] rounded-md flex flex-row justify-center p-20 space-x-6">
       <div className="bg-[#605E5E] p-14 rounded-lg flex flex-col items-center space-y-6">
         <div className="bg-[#D9D9D9] p-3 rounded-full">
-          <Avatar>
-            <AvatarImage alt="User" src="/User.png" className="h-[6vw]" />
-            <AvatarFallback>User</AvatarFallback>
-          </Avatar>
+          {/* Conditional rendering based on camera status */}
+          {isCamOn ? (
+            <video ref={videoRef} autoPlay className="h-[9vw]" />
+          ) : (
+            <Avatar>
+              <AvatarImage alt="User" src="/User.png" className="h-[6vw]" />
+              <AvatarFallback>User</AvatarFallback>
+            </Avatar>
+          )}
         </div>
         <div className="text-white">User</div>
         <div className="flex space-x-10">
