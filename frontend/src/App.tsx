@@ -1,4 +1,5 @@
 import "./App.css";
+import VoiceToText from "./VoiceToText";
 
 function App() {
   return (
@@ -7,6 +8,7 @@ function App() {
       <p>
         Edit <code>src/App.tsx</code> and save to test HMR
       </p>
+      <VoiceToText/>
     </>
   );
 }
