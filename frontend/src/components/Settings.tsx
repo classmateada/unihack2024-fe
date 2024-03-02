@@ -8,7 +8,18 @@ const openai = new OpenAI({
   apiKey: "", // This is the default and can be omitted
 });
 
-const Settings = () => {
+// Define the props type for Settings
+interface SettingsProps {
+  setSelectedOption: (value: string) => void;
+  setCountdownStart: React.Dispatch<React.SetStateAction<boolean>>;
+  setCallInterviewer: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Settings: React.FC<SettingsProps> = ({
+  setSelectedOption,
+  setCountdownStart,
+  setCallInterviewer,
+}) => {
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
 
@@ -17,9 +28,13 @@ const Settings = () => {
 
   //   Voice to text code
   const [isRecording, setIsRecording] = useState(false);
+  const [isBtnRecordDisabled, setIsBtnRecordDisabled] = useState(true);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
   const [blobArr, setBlobArr] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const [speaking, setSpeaking] = useState("hidden");
 
 //   const handleFinishInterview = async () => {
 //     // Post our answer to the last question
@@ -45,6 +60,9 @@ const Settings = () => {
 //   };
 
   const stopRecording = async () => {
+    // Disable the button
+    setSpeaking("hidden");
+    setIsBtnRecordDisabled(true);
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
@@ -72,6 +90,7 @@ const Settings = () => {
 
   const startRecording = async () => {
     console.log("Recording started");
+    setSpeaking("hidden");
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia({
         audio: true,
@@ -108,6 +127,7 @@ const Settings = () => {
     } catch (error) {
       console.error("Error accessing media devices:", error);
     }
+    setIsBtnRecordDisabled(false);
   };
 
   const getNextQuestion = async (prevQuest, prevAns) => {
@@ -145,9 +165,15 @@ const Settings = () => {
       console.log("==> getting question useeffect");
       getNextQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
+        setSpeaking("block");
       });
     }
   }, [userAnswer]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedOption(event.target.value);
+    console.log(event.target.value);
+  };
 
   const handleEndText = () => {
     console.log("===> startRecording");
@@ -155,6 +181,10 @@ const Settings = () => {
   };
 
   const handleStartInterview = () => {
+    console.log("Interview Started");
+    setCountdownStart(true);
+    setCallInterviewer("block flex flex-col");
+
     const url = "http://127.0.0.1:5000/greeting";
 
     const options = {
@@ -171,10 +201,30 @@ const Settings = () => {
       .then((data) => {
         console.log("===> data:", data);
         setResponseText(data);
+        setSpeaking("block");
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+
+    // Disable the button
+    setIsButtonDisabled(true);
+  };
+
+  // const handleStop = () => {
+  //   setCountdownStart(false); // Stop countdown
+  //   setCountdownKey(0);
+  // };
+
+  const Speaker = () => {
+    return (
+      <div className="absolute lg:top-[42vh] md:top-[30vh] right-[34%]">
+        <span className={`relative flex ${speaking} h-3 w-3`}>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+        </span>
+      </div>
+    );
   };
 
   const navigate = useNavigate()
@@ -186,13 +236,18 @@ const Settings = () => {
   return (
     <div className="bg-[#1a1a1a] p-8 ml-10">
       <div className="mt-4">
-        <select className="select select-bordered select-lg w-full bg-[#2e2e2e]">
-          <option disabled selected>
+        <select
+          className="select select-bordered select-lg w-full bg-[#2e2e2e]"
+          onChange={handleChange}
+          defaultValue="" // To address the controlled component aspect
+        >
+          <option disabled value="">
             Select company...
           </option>
-          <option>Atlassian</option>
+          <option value="Atlassian">Atlassian</option>
         </select>
-        <div className="flex flex-col rounded-md border border-white p-4 mt-4 justify-center items-center">
+
+        {/* <div className="flex flex-col rounded-md border border-white p-4 mt-4 justify-center items-center">
           <div className="w-full">
             <input
               className="p-4 w-full bg-white text-black rounded-md"
@@ -202,23 +257,32 @@ const Settings = () => {
           <button className="btn bg-[#2e2e2e] rounded-full mt-6 mb-2 text-white border border-blue-600 hover:bg-[#363636] hover:border hover:border-blue-600">
             Add question
           </button>
+        </div> */}
+      </div>
+      <div className="mt-8 flex justify-end flex-col">
+        <div className="flex-row self-end space-x-4">
+          <button
+            onClick={handleStartInterview}
+            className="btn text-white bg-[#2e2e2e] hover:bg-[#363636] disabled:bg-[#575757] disabled:text-gray-400"
+            disabled={isButtonDisabled}
+          >
+            Start interview
+          </button>
+          <button
+            className="btn text-white bg-[#2e2e2e] hover:bg-[#363636] disabled:bg-[#575757] disabled:text-gray-400"
+            onClick={stopRecording}
+            disabled={isBtnRecordDisabled}
+          >
+            Stop Recording
+          </button>
         </div>
       </div>
-      <div className="mt-8 flex space-x-4 justify-end">
-        <button
-          onClick={handleStartInterview}
-          className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]"
-        >
-          Start interview
-        </button>
-        <button onClick={() => goToFeedbackPage()} className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
-          Stop interview
-        </button>
-      </div>
       {responseText && (
-        <TextToVoice text={responseText} handleEnd={handleEndText} />
+        <>
+          <TextToVoice text={responseText} handleEnd={handleEndText} />
+          <Speaker />
+        </>
       )}
-      <button onClick={stopRecording}>I'm done</button>
     </div>
   );
 };
