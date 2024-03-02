@@ -25,7 +25,7 @@ const Person = () => {
           <AvatarImage
             alt="Interviewer"
             src="/Interviewer.png"
-            className="h-[10vw]"
+            className="h-[9vw]"
           />
           <AvatarFallback>Interviewer</AvatarFallback>
         </Avatar>

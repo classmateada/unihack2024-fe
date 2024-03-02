@@ -14,7 +14,7 @@ const Text = () => {
         </Avatar>
         <div className="bg-neutral-600 text-white p-4 rounded-lg">
           {`
-          Hey, how was your day {User}?
+          Hey, how was your day User?
         `}
         </div>
       </div>
@@ -27,7 +27,7 @@ const Text = () => {
           <AvatarFallback>User</AvatarFallback>
         </Avatar>
       </div>
-      <div className="mt-4 p-4 rounded-lg w-1/2 bottom-0 mb-4 absolute">
+      <div className="mt-4 p-4 rounded-lg w-[46%] bottom-0 mb-4 absolute">
         <label className="input flex items-center gap-2 bg-[#2e2e2e]">
           <input
             type="text"

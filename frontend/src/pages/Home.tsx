@@ -7,7 +7,7 @@ export default function Home() {
     <div>
       <div>
         <Person />
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 px-14">
           <Text />
           <Settings />
         </div>

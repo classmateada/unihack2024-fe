@@ -1,6 +1,6 @@
 const Settings = () => {
   return (
-    <div className="bg-[#1a1a1a] p-8">
+    <div className="bg-[#1a1a1a] p-8 ml-10">
       <div className="mt-4">
         <select className="select select-bordered select-lg w-full bg-[#2e2e2e]">
           <option disabled selected>
