@@ -39,7 +39,7 @@ const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ name, value, 
         style={{ width: '300px'}}
         onClick={handleToggleTextBox}
         >
-        <h1 className="text-3xl font-bold text-blue-500 text-center"> {name} </h1>
+        <h1 className="mb-4 text-3xl font-bold text-blue-500 text-center"> {name} </h1>
       <div
         style={{ width: '150px'}}
         ><CircularProgressbar
@@ -55,7 +55,7 @@ const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ name, value, 
       />
     </div>
       {isOpen && (
-        <div className="mt-2 p-2 border border-gray-300 rounded text-center flex items-center" style={{ width: '300px', height: '200px' }}>
+        <div className="mt-4 p-2 border border-gray-300 rounded text-center flex items-center" style={{ width: '300px', height: '200px' }}>
           <p> {feedback}</p>
         </div>
       )}
