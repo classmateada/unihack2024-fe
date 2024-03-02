@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 
 interface TextToSpeechProps {
     text: string;
+    handleEnd: () => void;
   }
 
 // Text input
-function TextToSpeech({ text }: TextToSpeechProps) {
+function TextToSpeech({ text, handleEnd}: TextToSpeechProps) {
     // States
     const [isPaused, setIsPaused] = useState(false);
     const [isReady, setIsReady] = useState(false);
@@ -14,6 +15,7 @@ function TextToSpeech({ text }: TextToSpeechProps) {
 
     useEffect(() => {
         const synth = window.speechSynthesis;
+        console.log(text)
         const u = new SpeechSynthesisUtterance(text);
         const voices = synth.getVoices();
 
@@ -21,9 +23,14 @@ function TextToSpeech({ text }: TextToSpeechProps) {
         setVoice(voices[2]);
 
         setIsReady(true);
+        
+        u.addEventListener("end", () => {
+            setIsReady(false);
+            handleEnd();
+        })
 
         return () => {
-        synth.cancel();
+            synth.cancel();
         };
     }, [text]);
 
