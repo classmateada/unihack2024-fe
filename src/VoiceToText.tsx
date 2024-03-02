@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Duplex from "stream"; // Native Node Module
 
 import OpenAI from "openai";
 
@@ -27,6 +26,27 @@ const VoiceToText = (props: Props) => {
   );
   const [transcriptLength, setTranscriptLength] = useState(0);
   const [blobArr, setBlobArr] = useState([]);
+
+  const stopRecording = async () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+    }
+    setIsRecording(false);
+    clearInterval(timerInterval!);
+    console.log("Recording stopped");
+
+    // console.log(audioBuf)
+    // const myReadableStream = bufferToStream(audioBuf);
+    const file = new File(blobArr, "audio.mp3", { type: "audio/mp3" });
+
+    const transcription = await openai.audio.transcriptions.create({
+      file: file,
+      model: "whisper-1",
+    });
+    console.log(transcription);
+    console.log(transcription.text);
+  };
+
 
   const startRecording = async () => {
     console.log("Recording started");
@@ -74,32 +94,17 @@ const VoiceToText = (props: Props) => {
     }
   };
 
-  const stopRecording = async () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-    }
-    setIsRecording(false);
-    clearInterval(timerInterval!);
-    console.log("Recording stopped");
-
-    // console.log(audioBuf)
-    // const myReadableStream = bufferToStream(audioBuf);
-    const file = new File(blobArr, "audio.mp3", { type: "audio/mp3" });
-
-    // const transcription = await openai.audio.transcriptions.create({
-    //   file: file,
-    //   model: "whisper-1",
-    // });
-    // console.log(transcription);
-    // console.log(transcription.text);
-  };
-
   return (
     <>
+    <div>
       <button onClick={startRecording}>Start</button>
-      <button onClick={stopRecording}>Stop</button>
+    </div>
+    <div>
+      <button onClick={stopRecording}>I'm done</button>
+    </div>
     </>
   );
 };
 
 export default VoiceToText;
+
