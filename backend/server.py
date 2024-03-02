@@ -35,7 +35,6 @@ def greeting():
     )
 
     greetings = cutoffRole(greetings_completion.choices[0].message.content)
-    print(greetings)
     return greetings
 
 # Given the most recent dialog, endpoint returns a response to the user and a behavioural question.
