@@ -135,7 +135,7 @@ const Person = ({ callInterviewer }: { callInterviewer: string }) => {
         <div
           className={cn(
             callInterviewer,
-            `bg-[#605E5E] p-10 rounded-lg items-center space-y-2 w-[30vw] duration-0 ${opacityClass}`
+            `bg-[#605E5E] p-10 rounded-lg items-center space-y-2 w-[30vw] duration-0 opacity-40 ${opacityClass}`
           )}
         >
           <Avatar>

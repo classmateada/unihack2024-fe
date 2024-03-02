@@ -4,7 +4,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: "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", // This is the default and can be omitted
+  apiKey: "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", // This is the default and can be omitted
 });
 
 // Define the props type for Settings
@@ -30,8 +30,11 @@ const Settings: React.FC<SettingsProps> = ({
   const [blobArr, setBlobArr] = useState([]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  const [speaking, setSpeaking] = useState("hidden");
+
   const stopRecording = async () => {
     // Disable the button
+    setSpeaking("hidden");
     setIsBtnRecordDisabled(true);
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
@@ -60,6 +63,7 @@ const Settings: React.FC<SettingsProps> = ({
 
   const startRecording = async () => {
     console.log("Recording started");
+    setSpeaking("hidden");
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia({
         audio: true,
@@ -122,6 +126,7 @@ const Settings: React.FC<SettingsProps> = ({
       console.log("==> getting question useeffect");
       getQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
+        setSpeaking("block");
       });
     }
   }, [userAnswer]);
@@ -157,6 +162,7 @@ const Settings: React.FC<SettingsProps> = ({
       .then((data) => {
         console.log("===> data:", data);
         setResponseText(data);
+        setSpeaking("block");
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -170,6 +176,17 @@ const Settings: React.FC<SettingsProps> = ({
   //   setCountdownStart(false); // Stop countdown
   //   setCountdownKey(0);
   // };
+
+  const Speaker = () => {
+    return (
+      <div className="absolute lg:top-[42vh] md:top-[30vh] right-[34%]">
+        <span className={`relative flex ${speaking} h-3 w-3`}>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+        </span>
+      </div>
+    );
+  };
 
   return (
     <div className="bg-[#1a1a1a] p-8 ml-10">
@@ -216,7 +233,10 @@ const Settings: React.FC<SettingsProps> = ({
         </div>
       </div>
       {responseText && (
-        <TextToVoice text={responseText} handleEnd={handleEndText} />
+        <>
+          <TextToVoice text={responseText} handleEnd={handleEndText} />
+          <Speaker />
+        </>
       )}
     </div>
   );
