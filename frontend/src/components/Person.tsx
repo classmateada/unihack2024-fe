@@ -1,6 +1,20 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import { useState } from "react";
 
 const Person = () => {
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCamOn, setIsCamOn] = useState(true);
+
+  const toggleMic = () => setIsMicOn(!isMicOn);
+  const toggleCam = () => setIsCamOn(!isCamOn);
+
+  const getMicIcon = () => {
+    return isMicOn ? "/Mic.png" : "/MicOff.png";
+  };
+  const getCamIcon = () => {
+    return isCamOn ? "/Cam.png" : "/CamOff.png";
+  };
+
   return (
     <div className="bg-[#333333] rounded-md flex flex-row justify-center p-20 space-x-6">
       <div className="bg-[#605E5E] p-14 rounded-lg flex flex-col items-center space-y-6">
@@ -12,11 +26,11 @@ const Person = () => {
         </div>
         <div className="text-white">User</div>
         <div className="flex space-x-10">
-          <button className="btn glass btn-circle">
-            <img src="/Mic.png" />
+          <button className="btn glass btn-circle" onClick={toggleMic}>
+            <img src={getMicIcon()} />
           </button>
-          <button className="btn glass btn-circle">
-            <img src="/Cam.png" />
+          <button className="btn glass btn-circle" onClick={toggleCam}>
+            <img src={getCamIcon()} />
           </button>
         </div>
       </div>

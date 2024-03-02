@@ -8,6 +8,7 @@ const Settings = () => {
           </option>
           <option>Atlassian</option>
         </select>
+        {/* Might remove */}
         <div className="flex flex-col rounded-md border border-white p-4 mt-4 justify-center items-center">
           <div className="w-full">
             <input
@@ -20,6 +21,7 @@ const Settings = () => {
           </button>
         </div>
       </div>
+
       <div className="mt-8 flex space-x-4 justify-end">
         <button className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
           Start interview
