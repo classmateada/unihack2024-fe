@@ -37,5 +37,6 @@ npm run dev
 
 This will start the Vite server, usually on http://localhost:5173. Open your browser and navigate to this URL to view your app.
 
-- shadcn
-- tailwindcss
+## OpenAI API Key
+
+Create a .env file with your openAIKey in `VITE_NEXT_PUBLIC_OPENAI_API_KEY`
