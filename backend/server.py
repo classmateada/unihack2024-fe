@@ -2,8 +2,11 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from flask import Flask, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
@@ -25,6 +28,7 @@ def greeting():
     )
 
     greetings = cutoffRole(greetings_completion.choices[0].message.content)
+    print(greetings)
     return greetings
 
 @app.route('/question', methods=['POST'])
