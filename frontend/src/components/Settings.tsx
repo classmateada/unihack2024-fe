@@ -1,4 +1,33 @@
+import { useState } from 'react';
+import TextToVoice from '../components/TextToVoice';
+
 const Settings = () => {
+  const [responseText, setResponseText] = useState('');
+
+  const handleStartInterview = () => {
+    const url = 'http://127.0.0.1:5000/greeting';
+
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    fetch(url, options)
+      .then(response => {
+        // console.log(response)
+        // console.log(response.text())
+        return response.text();
+      })
+      .then(data => {
+        setResponseText(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  };
+
   return (
     <div className="bg-[#1a1a1a] p-8 ml-10">
       <div className="mt-4">
@@ -21,13 +50,14 @@ const Settings = () => {
         </div>
       </div>
       <div className="mt-8 flex space-x-4 justify-end">
-        <button className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
+        <button onClick = {handleStartInterview} className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
           Start interview
         </button>
         <button className="btn text-white bg-[#2e2e2e] hover:bg-[#363636]">
           Stop interview
         </button>
       </div>
+      {responseText && <TextToVoice text={responseText} />}
     </div>
   );
 };
