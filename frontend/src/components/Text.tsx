@@ -1,12 +1,13 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
-const Text = () => {
+const Text = ({ selectedOption }: { selectedOption: string }) => {
   const [inputValue, setInputValue] = useState("");
   const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
     []
   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -22,43 +23,91 @@ const Text = () => {
       { type: "user", message: inputValue },
     ]);
 
+    sendMessage(inputValue);
+
     setInputValue("");
+  };
+
+  // ChatGPT API call here
+  const sendMessage = (message: string) => {
+    const url = "https://api.openai.com/v1/chat/completions";
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${
+        import.meta.env.VITE_NEXT_PUBLIC_OPENAI_API_KEY
+      }`,
+    };
+    const role = selectedOption;
+    const data: object = {
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `You are an interviewer from ${role} asking behavioural questions questions, perform a mock interview with the user. (respond in one sentence)`,
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+    };
+
+    if (selectedOption !== "") {
+      setIsLoading(true);
+
+      axios
+        .post(url, data, { headers: headers })
+        .then((response) => {
+          console.log(response);
+          setChatLog((prevChatLog) => [
+            ...prevChatLog,
+            { type: "bot", message: response.data.choices[0].message.content },
+          ]);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      console.log("Select a company before starting interview");
+      setIsLoading(true);
+
+      axios
+        .post(url, data, { headers: headers })
+        .then((response) => {
+          console.log(response);
+          setChatLog((prevChatLog) => [
+            ...prevChatLog,
+            {
+              type: "bot",
+              message: "Select a company before starting interview",
+            },
+          ]);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   return (
     <div className="mt-8 flex flex-col p-4 w-full max-w-4xl">
-      <div className="flex space-x-4 items-start">
-        <Avatar>
-          <AvatarImage
-            alt="Chatbot"
-            src="/Interviewer.png"
-            className="w-[40px]"
-          />
-          <AvatarFallback>CB</AvatarFallback>
-        </Avatar>
-        <div className="bg-neutral-600 text-white p-4 rounded-lg">
-          Hey, how was your day User?
-        </div>
-      </div>
       <div className="flex flex-col gap-4">
         {chatLog.map(
           (message, index) =>
             message.message.trim() !== "" && (
-              <div className="flex space-x-4 items-start mt-2 self-end">
+              <div
+                className={`flex space-x-4 mt-2 ${
+                  message.type === "user" ? "self-end" : "self-start"
+                }`}
+                key={index}
+              >
                 <div
-                  key={index}
-                  className="bg-[#009963] text-white p-4 rounded-lg"
+                  className={` text-white p-4 rounded-lg ${
+                    message.type === "user" ? "bg-[#009963]" : "bg-neutral-600"
+                  }`}
                 >
                   {message.message}
                 </div>
-                <Avatar>
-                  <AvatarImage
-                    alt="User"
-                    src="/UserSmall.png"
-                    className="w-[40px]"
-                  />
-                  <AvatarFallback>User</AvatarFallback>
-                </Avatar>
                 <div ref={messagesEndRef} />
               </div>
             )
