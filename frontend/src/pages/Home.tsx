@@ -1,7 +1,7 @@
 import Person from "../components/Person";
 import Settings from "../components/Settings";
 import Text from "../components/Text";
-import React, { useState } from "react";
+import  { useState } from "react";
 import Countdown from "react-countdown";
 
 export default function Home() {

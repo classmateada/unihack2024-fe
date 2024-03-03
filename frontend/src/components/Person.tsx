@@ -1,10 +1,10 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { useRef, useState, useEffect } from "react";
-import cn from "./cn";
+// import cn from "./cn";
 import CatWaving from "../../public/Wave-gif.gif";
 import CatStandBy from "../../public/Stand-by.gif";
 import CatTalking from "../../public/Talking-gif.gif";
-import { isContext } from "vm";
+// import { isContext } from "vm";
 
 interface PersonProps {
   callInterviewer: string;
@@ -19,18 +19,19 @@ const Person = ({
   isButtonDisabled,
   hasInterviewStart,
 }: PersonProps) => {
-  const [isMicOn, setIsMicOn] = useState(false);
+  console.log(callInterviewer);
+  //   const [isMicOn, setIsMicOn] = useState(false);
   const [isCamOn, setIsCamOn] = useState(false);
 
   // const [isRecording, setIsRecording] = useState(false);
   const [hasWaved, setHasWaved] = useState(false);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Define the state with type Blob | null
+  //   const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Define the state with type Blob | null
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef(new MediaRecorder(new MediaStream()));
 
   const [opacityClass, setOpacityClass] = useState("opacity-40");
-
+  console.log(audioRef, opacityClass);
   const [catState, setCatState] = useState(2);
 
   const [speaking, setSpeaking] = useState("hidden");
@@ -97,50 +98,50 @@ const Person = ({
     }
   }, [hasInterviewStart, isButtonDisabled, isRecording]);
 
-  const toggleMic = () => {
-    // Toggle the state immediately to reflect the UI change.
-    setIsMicOn((currentState) => !currentState);
+  //   const toggleMic = () => {
+  //     // Toggle the state immediately to reflect the UI change.
+  //     setIsMicOn((currentState) => !currentState);
 
-    // Now act based on the new state.
-    if (isMicOn) {
-      // If the microphone was on, we now want to stop the recording.
-      if (isRecording && audioRef.current) {
-        audioRef.current.stop(); // Stop the media recorder.
-        setIsRecording(false);
+  //     // Now act based on the new state.
+  //     if (isMicOn) {
+  //       // If the microphone was on, we now want to stop the recording.
+  //       if (isRecording && audioRef.current) {
+  //         audioRef.current.stop(); // Stop the media recorder.
+  //         // setIsRecording(false);
 
-        // Stop all the tracks on the stream.
-        audioRef.current.stream.getTracks().forEach((track) => track.stop());
-      }
-    } else {
-      // If the microphone was off, we now want to start the recording.
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          // Create a new media recorder with the stream.
-          audioRef.current = new MediaRecorder(stream);
-          audioRef.current.start();
-          setIsRecording(true);
+  //         // Stop all the tracks on the stream.
+  //         audioRef.current.stream.getTracks().forEach((track) => track.stop());
+  //       }
+  //     } else {
+  //       // If the microphone was off, we now want to start the recording.
+  //       navigator.mediaDevices
+  //         .getUserMedia({ audio: true })
+  //         .then((stream) => {
+  //           // Create a new media recorder with the stream.
+  //           audioRef.current = new MediaRecorder(stream);
+  //           audioRef.current.start();
+  //         //   setIsRecording(true);
 
-          const chunks: BlobPart[] = []; // Define the type for chunks.
-          audioRef.current.ondataavailable = (e) => {
-            chunks.push(e.data);
-          };
+  //           const chunks: BlobPart[] = []; // Define the type for chunks.
+  //           audioRef.current.ondataavailable = (e) => {
+  //             chunks.push(e.data);
+  //           };
 
-          audioRef.current.onstop = () => {
-            const audioBlob = new Blob(chunks, {
-              type: "audio/ogg; codecs=opus",
-            });
-            setAudioBlob(audioBlob);
+  //           audioRef.current.onstop = () => {
+  //             const audioBlob = new Blob(chunks, {
+  //               type: "audio/ogg; codecs=opus",
+  //             });
+  //             setAudioBlob(audioBlob);
 
-            // Stop all the tracks on the stream after we're done recording.
-            stream.getTracks().forEach((track) => track.stop());
-          };
-        })
-        .catch((err) => {
-          console.error("Failed to get audio stream", err);
-        });
-    }
-  };
+  //             // Stop all the tracks on the stream after we're done recording.
+  //             stream.getTracks().forEach((track) => track.stop());
+  //           };
+  //         })
+  //         .catch((err) => {
+  //           console.error("Failed to get audio stream", err);
+  //         });
+  //     }
+  //   };
 
   const toggleCam = () => {
     setIsCamOn(!isCamOn);
@@ -165,9 +166,9 @@ const Person = ({
     }
   };
 
-  const getMicIcon = () => {
-    return isMicOn ? "/Mic.png" : "/MicOff.png";
-  };
+  //   const getMicIcon = () => {
+  //     return isMicOn ? "/Mic.png" : "/MicOff.png";
+  //   };
   const getCamIcon = () => {
     return isCamOn ? "/Cam.png" : "/CamOff.png";
   };

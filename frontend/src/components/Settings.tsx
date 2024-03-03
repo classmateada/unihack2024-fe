@@ -40,18 +40,19 @@ const Settings: React.FC<SettingsProps> = ({
   setIsButtonDisabled,
   setHasInterviewStart,
 }) => {
+    console.log(hasInterviewStart, isRecording)
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
 
-  const [questionArr, setQuestionArr] = useState([]);
-  const [answerArr, setAnswerArr] = useState([]);
+  const [questionArr, setQuestionArr] = useState<string[]>([]);
+  const [answerArr, setAnswerArr] = useState<string[]>([]);
 
   //   Voice to text code
   // const [isRecording, setIsRecording] = useState(false);
   const [isBtnRecordDisabled, setIsBtnRecordDisabled] = useState(true);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
-  const [blobArr, setBlobArr] = useState([]);
+  const [blobArr, setBlobArr] = useState<Blob[]>([]);
   // const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const [speaking, setSpeaking] = useState("hidden");
@@ -159,7 +160,7 @@ const Settings: React.FC<SettingsProps> = ({
     setIsBtnRecordDisabled(false);
   };
 
-  const getNextQuestion = async (prevQuest, prevAns) => {
+  const getNextQuestion = async (prevQuest: string, prevAns: string) => {
     // add new  q&as  with history of q&as
     const newAnswers = [...answerArr, prevAns];
     const newQuestions = [...questionArr, prevQuest];

@@ -24,8 +24,8 @@ const Text = ({
   //     []
   //   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
+  //   const [isLoading, setIsLoading] = useState(false);
+  console.log(response);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -35,15 +35,15 @@ const Text = ({
     console.log("Chatlog:", chatLog);
   }, [chatLog]);
 
-//   useEffect(() => {
-//     setChatLog((prevChatLog) => [
-//       ...prevChatLog,
-//       {
-//         type: "bot",
-//         message: response,
-//       },
-//     ]);
-//   }, []);
+  //   useEffect(() => {
+  //     setChatLog((prevChatLog) => [
+  //       ...prevChatLog,
+  //       {
+  //         type: "bot",
+  //         message: response,
+  //       },
+  //     ]);
+  //   }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -83,40 +83,36 @@ const Text = ({
     };
 
     if (selectedOption !== "") {
-      setIsLoading(true);
+      //   setIsLoading(true);
 
-      axios
-        .post(url, data, { headers: headers })
-        .then((response) => {
-          console.log(response);
-          setChatLog((prevChatLog) => [
-            ...prevChatLog,
-            { type: "bot", message: response.data.choices[0].message.content },
-          ]);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+      axios.post(url, data, { headers: headers }).then((response) => {
+        console.log(response);
+        setChatLog((prevChatLog) => [
+          ...prevChatLog,
+          { type: "bot", message: response.data.choices[0].message.content },
+        ]);
+      });
+      // .finally(() => {
+      //   setIsLoading(false);
+      // });
     } else {
       if (inputValue.trim() !== "") {
         console.log("Select a company before starting interview");
-        setIsLoading(true);
+        // setIsLoading(true);
 
-        axios
-          .post(url, data, { headers: headers })
-          .then((response) => {
-            console.log(response);
-            setChatLog((prevChatLog) => [
-              ...prevChatLog,
-              {
-                type: "bot",
-                message: "Select a company before starting interview",
-              },
-            ]);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+        axios.post(url, data, { headers: headers }).then((response) => {
+          console.log(response);
+          setChatLog((prevChatLog) => [
+            ...prevChatLog,
+            {
+              type: "bot",
+              message: "Select a company before starting interview",
+            },
+          ]);
+        });
+        //   .finally(() => {
+        //     setIsLoading(false);
+        //   });
       }
     }
   };

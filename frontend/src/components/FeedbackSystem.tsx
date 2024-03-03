@@ -6,6 +6,7 @@ interface AnimatedProgressBarProps {
     name: string
     value: number;
     duration: number;
+    feedback: string;
 }
 
 const AnimatedProgressBar: React.FC<AnimatedProgressBarProps> = ({ name, value, duration, feedback }) => {
