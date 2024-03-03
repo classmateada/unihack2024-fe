@@ -5,11 +5,15 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: "", // This is the default and can be omitted
+  apiKey: "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", // This is the default and can be omitted
 });
 
 // Define the props type for Settings
 interface SettingsProps {
+  setChatLog: React.Dispatch<
+    React.SetStateAction<{ type: string; message: string }[]>
+  >;
+  selectedOption: string;
   setSelectedOption: (value: string) => void;
   setCountdownStart: React.Dispatch<React.SetStateAction<boolean>>;
   setCallInterviewer: React.Dispatch<React.SetStateAction<string>>;
@@ -17,6 +21,8 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({
+  setChatLog,
+  selectedOption,
   setSelectedOption,
   setCountdownStart,
   setCallInterviewer,
@@ -85,6 +91,14 @@ const Settings: React.FC<SettingsProps> = ({
       console.log(transcription.text);
       setUserAnswer(transcription.text);
       setBlobArr([]);
+
+      setChatLog((prevChatLog) => [
+        ...prevChatLog,
+        {
+          type: "user",
+          message: transcription.text,
+        },
+      ]);
     } else {
       setUserAnswer("...");
     }
@@ -145,6 +159,7 @@ const Settings: React.FC<SettingsProps> = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        company: selectedOption || "general", //google is our default
         "prev-question": newQuestions,
         "prev-answer": newAnswers,
       }),
@@ -168,6 +183,10 @@ const Settings: React.FC<SettingsProps> = ({
       getNextQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
         setSpeaking("block");
+        setChatLog((prevChatLog) => [
+          ...prevChatLog,
+          { type: "bot", message: question },
+        ]);
       });
     }
   }, [userAnswer]);
@@ -179,6 +198,7 @@ const Settings: React.FC<SettingsProps> = ({
 
   const handleEndText = () => {
     console.log("===> startRecording");
+
     startRecording();
   };
 
@@ -204,6 +224,13 @@ const Settings: React.FC<SettingsProps> = ({
         console.log("===> data:", data);
         setResponseText(data);
         setResponse(data);
+        setChatLog((prevChatLog) => [
+          ...prevChatLog,
+          {
+            type: "bot",
+            message: data,
+          },
+        ]);
         setSpeaking("block");
       })
       .catch((error) => {
@@ -247,7 +274,15 @@ const Settings: React.FC<SettingsProps> = ({
           <option disabled value="">
             Select company...
           </option>
-          <option value="Atlassian">Atlassian</option>
+          <option value="amazon">amazon</option>
+          <option value="airbnb">airbnb</option>
+          <option value="dropbox">dropbox</option>
+          <option value="lyft">lyft</option>
+          <option value="palantir">palantir</option>
+          <option value="slack">slack</option>
+          <option value="stack_overflow">stack_overflow</option>
+          <option value="stripe">stripe</option>
+          <option value="tiktok">tiktok</option>
         </select>
 
         {/* <div className="flex flex-col rounded-md border border-white p-4 mt-4 justify-center items-center">
@@ -277,6 +312,13 @@ const Settings: React.FC<SettingsProps> = ({
             disabled={isBtnRecordDisabled}
           >
             Stop Recording
+          </button>
+          <button
+            className="btn text-white bg-green-500 hover:bg-[#363636] disabled:bg-[#575757] disabled:text-gray-400"
+            disabled={isBtnRecordDisabled}
+            onClick={goToFeedbackPage}
+          >
+            Finish interview
           </button>
         </div>
       </div>
