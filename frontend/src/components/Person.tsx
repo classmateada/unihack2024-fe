@@ -11,6 +11,7 @@ interface PersonProps {
   isRecording: boolean;
   isButtonDisabled: boolean;
   hasInterviewStart: boolean;
+
 }
 
 const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewStart }: PersonProps) => {
@@ -18,6 +19,7 @@ const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewSt
   const [isCamOn, setIsCamOn] = useState(false);
 
   // const [isRecording, setIsRecording] = useState(false);
+  const [hasWaved, setHasWaved] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Define the state with type Blob | null
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -45,21 +47,32 @@ const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewSt
       start recording - isRecording
       standby
       */
-    // console.log("aaaaaaaaaaaaaaaaaaaa" + hasInterviewStart);
     // Waving
-    if (hasInterviewStart) {
+    console.log("Has it started" + hasInterviewStart);
+    console.log("Check if button is disabled" + isButtonDisabled);
+    console.log("Is recording working" + isRecording);
+    if (hasInterviewStart && !hasWaved) {
       setCatState(0);
+      setHasWaved(true);
+      const timer = setTimeout(() => {setCatState(2);}, 7000);
+      return () => clearTimeout(timer);
     }
+    else if (isRecording) {
+      console.log("Running Standby" + isButtonDisabled);
+        setCatState(2);
+      }
     // Talking
     else if (isButtonDisabled) {
-      setCatState(1);
+    console.log("Running Talking" + isButtonDisabled);
+    setCatState(1);
     }
     // Standby 
     else {
+    console.log("Running Standby" + isButtonDisabled);
       setCatState(2);
     }
 
-  }, [catState]);
+  }, [hasInterviewStart, isButtonDisabled, isRecording]);
 
   const toggleMic = () => {
     // Toggle the state immediately to reflect the UI change.

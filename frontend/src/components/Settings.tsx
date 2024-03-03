@@ -5,7 +5,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: "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", // This is the default and can be omitted
+  apiKey: import.meta.env.VITE_NEXT_PUBLIC_OPENAI_API_KEY, // This is the default and can be omitted
 });
 
 // Define the props type for Settings
