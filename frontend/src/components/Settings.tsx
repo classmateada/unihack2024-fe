@@ -100,6 +100,7 @@ const Settings: React.FC<SettingsProps> = ({
         file: file,
         model: "whisper-1",
       });
+      console.log("In stop recording");
 
       console.log(transcription);
       console.log(transcription.text);
@@ -197,6 +198,7 @@ const Settings: React.FC<SettingsProps> = ({
       getNextQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
         setSpeaking("block");
+        console.log("getNext question")
         setChatLog((prevChatLog) => [
           ...prevChatLog,
           { type: "bot", message: question },
@@ -263,7 +265,7 @@ const Settings: React.FC<SettingsProps> = ({
 
   const Speaker = () => {
     return (
-      <div className="absolute lg:top-[42vh] md:top-[30vh] right-[34%]">
+      <div className="absolute lg:top-[50vh] md:top-[30vh] right-[34%]">
         <span className={`relative flex ${speaking} h-3 w-3`}>
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>

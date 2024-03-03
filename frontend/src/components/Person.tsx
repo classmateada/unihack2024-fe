@@ -1,9 +1,9 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { useRef, useState, useEffect } from "react";
 import cn from "./cn";
-import CatWaving from '../../public/Wave-gif.gif'
-import CatStandBy from '../../public/Stand-by.gif'
-import CatTalking from '../../public/Talking-gif.gif'
+import CatWaving from "../../public/Wave-gif.gif";
+import CatStandBy from "../../public/Stand-by.gif";
+import CatTalking from "../../public/Talking-gif.gif";
 import { isContext } from "vm";
 
 interface PersonProps {
@@ -11,10 +11,14 @@ interface PersonProps {
   isRecording: boolean;
   isButtonDisabled: boolean;
   hasInterviewStart: boolean;
-
 }
 
-const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewStart }: PersonProps) => {
+const Person = ({
+  callInterviewer,
+  isRecording,
+  isButtonDisabled,
+  hasInterviewStart,
+}: PersonProps) => {
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCamOn, setIsCamOn] = useState(false);
 
@@ -29,6 +33,8 @@ const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewSt
 
   const [catState, setCatState] = useState(2);
 
+  const [speaking, setSpeaking] = useState("hidden");
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setOpacityClass("opacity-100");
@@ -38,8 +44,19 @@ const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewSt
     return () => clearTimeout(timer);
   }, []); // Empty dependency array means this effect runs once on mount
 
+  const Speaker = () => {
+    return (
+      <div className="absolute lg:top-[47.5vh] md:top-[30vh] right-[66%]">
+        <span className={`relative flex ${speaking} h-3 w-3`}>
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+        </span>
+      </div>
+    );
+  };
+
   useEffect(() => {
-      /*
+    /*
       start interview - clickStart interview button
       wave (wait for animation to finish) then standy
       question - isButtonDisabled
@@ -54,24 +71,30 @@ const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewSt
     if (hasInterviewStart && !hasWaved) {
       setCatState(0);
       setHasWaved(true);
-      const timer = setTimeout(() => {setCatState(2);}, 7000);
-      return () => clearTimeout(timer);
-    }
-    else if (isRecording) {
-      console.log("Running Standby" + isButtonDisabled);
+      const timer = setTimeout(() => {
         setCatState(2);
+      }, 7000);
+      return () => clearTimeout(timer);
+    } else if (isRecording) {
+      console.log("Running Standby" + isButtonDisabled);
+      if (hasInterviewStart) {
+        console.log("user started speaking");
+        setSpeaking("block");
       }
-    // Talking
-    else if (isButtonDisabled) {
-    console.log("Running Talking" + isButtonDisabled);
-    setCatState(1);
-    }
-    // Standby 
-    else {
-    console.log("Running Standby" + isButtonDisabled);
       setCatState(2);
     }
+    // Talking
+    else if (isButtonDisabled) {
+      console.log("Running Talking" + isButtonDisabled);
+      setCatState(1);
+      setSpeaking("hidden");
+    }
+    // Standby
+    else {
+      console.log("In weird state: " + isButtonDisabled);
 
+      setCatState(2);
+    }
   }, [hasInterviewStart, isButtonDisabled, isRecording]);
 
   const toggleMic = () => {
@@ -188,6 +211,7 @@ const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewSt
               </div>
             </div>
           )}
+          <Speaker />
         </div>
 
         {/* <div
@@ -206,9 +230,18 @@ const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewSt
           </Avatar>
           <div className="text-white">Cat Interviewer</div>
         </div> */}
-        
-        <img className={`rounded-lg w-[30vw]`} src={catState === 0 ? CatWaving : catState === 1 ? CatTalking : CatStandBy} alt="catState" />
 
+        <img
+          className={`rounded-lg w-[30vw]`}
+          src={
+            catState === 0
+              ? CatWaving
+              : catState === 1
+              ? CatTalking
+              : CatStandBy
+          }
+          alt="catState"
+        />
       </div>
     </>
   );

@@ -35,15 +35,15 @@ const Text = ({
     console.log("Chatlog:", chatLog);
   }, [chatLog]);
 
-  useEffect(() => {
-    setChatLog((prevChatLog) => [
-      ...prevChatLog,
-      {
-        type: "bot",
-        message: response,
-      },
-    ]);
-  }, []);
+//   useEffect(() => {
+//     setChatLog((prevChatLog) => [
+//       ...prevChatLog,
+//       {
+//         type: "bot",
+//         message: response,
+//       },
+//     ]);
+//   }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
