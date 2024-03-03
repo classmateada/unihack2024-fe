@@ -1,7 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
-const Text = ({ selectedOption }: { selectedOption: string }) => {
+const Text = ({
+  selectedOption,
+  response,
+}: {
+  selectedOption: string;
+  response: string;
+}) => {
   const [inputValue, setInputValue] = useState("");
   const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
     []
@@ -14,6 +20,16 @@ const Text = ({ selectedOption }: { selectedOption: string }) => {
   };
 
   useEffect(scrollToBottom, [chatLog]);
+
+  useEffect(() => {
+    setChatLog((prevChatLog) => [
+      ...prevChatLog,
+      {
+        type: "bot",
+        message: response,
+      },
+    ]);
+  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

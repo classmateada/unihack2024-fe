@@ -1,11 +1,11 @@
-import TextToVoice from '../components/TextToVoice';
-import { useNavigate } from "react-router-dom"
+import TextToVoice from "../components/TextToVoice";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: "", // This is the default and can be omitted
+  apiKey: "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", // This is the default and can be omitted
 });
 
 // Define the props type for Settings
@@ -13,12 +13,14 @@ interface SettingsProps {
   setSelectedOption: (value: string) => void;
   setCountdownStart: React.Dispatch<React.SetStateAction<boolean>>;
   setCallInterviewer: React.Dispatch<React.SetStateAction<string>>;
+  setResponse: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Settings: React.FC<SettingsProps> = ({
   setSelectedOption,
   setCountdownStart,
   setCallInterviewer,
+  setResponse,
 }) => {
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
@@ -36,28 +38,28 @@ const Settings: React.FC<SettingsProps> = ({
 
   const [speaking, setSpeaking] = useState("hidden");
 
-//   const handleFinishInterview = async () => {
-//     // Post our answer to the last question
-//     const url = "http://127.0.0.1:5000/rating";
-//     const qa_chain = questionArr.reduce((prev, curr, idx) => {
-//         return [...prev, curr, answerArr[idx]];
-//     }, [])
-    
-//     const options = {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         "conversation": qa_chain 
-//       }),
-//     };
+  //   const handleFinishInterview = async () => {
+  //     // Post our answer to the last question
+  //     const url = "http://127.0.0.1:5000/rating";
+  //     const qa_chain = questionArr.reduce((prev, curr, idx) => {
+  //         return [...prev, curr, answerArr[idx]];
+  //     }, [])
 
-//     // Get response and next question, should be based on previous q&a
-//     const resultPromise = await fetch(url, options);
-//     const rating = await resultPromise.text();
-//     setResponseText(rating)
-//   };
+  //     const options = {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         "conversation": qa_chain
+  //       }),
+  //     };
+
+  //     // Get response and next question, should be based on previous q&a
+  //     const resultPromise = await fetch(url, options);
+  //     const rating = await resultPromise.text();
+  //     setResponseText(rating)
+  //   };
 
   const stopRecording = async () => {
     // Disable the button
@@ -183,7 +185,7 @@ const Settings: React.FC<SettingsProps> = ({
   const handleStartInterview = () => {
     console.log("Interview Started");
     setCountdownStart(true);
-    setCallInterviewer("block flex flex-col");
+    setCallInterviewer("block flex flex-col opacity-40");
 
     const url = "http://127.0.0.1:5000/greeting";
 
@@ -201,6 +203,7 @@ const Settings: React.FC<SettingsProps> = ({
       .then((data) => {
         console.log("===> data:", data);
         setResponseText(data);
+        setResponse(data);
         setSpeaking("block");
       })
       .catch((error) => {
@@ -227,12 +230,12 @@ const Settings: React.FC<SettingsProps> = ({
     );
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const goToFeedbackPage=()=>{
+  const goToFeedbackPage = () => {
     navigate("/feedback");
-  }
-  
+  };
+
   return (
     <div className="bg-[#1a1a1a] p-8 ml-10">
       <div className="mt-4">
