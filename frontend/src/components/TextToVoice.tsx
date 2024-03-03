@@ -1,86 +1,66 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 interface TextToSpeechProps {
-    text: string;
-    handleEnd: () => void;
-  }
+  text: string;
+  handleEnd: () => void;
+}
 
-// Text input
-function TextToSpeech({ text, handleEnd}: TextToSpeechProps) {
-    // States
-    const [isPaused, setIsPaused] = useState(false);
-    const [isReady, setIsReady] = useState(false);
-    const [utterance, setUtterance] = useState(null);
-    const [voice, setVoice] = useState(null);
+function TextToSpeech({ text, handleEnd }: TextToSpeechProps) {
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
-    useEffect(() => {
-        const synth = window.speechSynthesis;
-        console.log(text)
-        const u = new SpeechSynthesisUtterance(text);
-        const voices = synth.getVoices();
+  const lastText = useRef("");
 
-        setUtterance(u);
-        setVoice(voices[2]);
+  useEffect(() => {
+    // Only fetch new audio if the text has changed
+    if (text && text !== lastText.current) {
+      lastText.current = text; // Update lastText with the new value
+      const options = {
+        method: "POST",
+        headers: {
+          accept: "audio/mpeg",
+          "content-type": "application/json",
+          AUTHORIZATION: "b5aba90efdbd4cacb711b473e12ef491",
+          "X-USER-ID": "PSlrafexyYaO25aOgQmVzIoGp1L2", // Replace with your user ID API Key from play.ht
+        },
+        body: JSON.stringify({
+          text: text,
+          voice:
+            "s3://voice-cloning-zero-shot/dc23bb38-f568-4323-b6fb-7d64f685b97a/joseph/manifest.json",
+          output_format: "mp3",
+          sample_rate: 8000,
+        }),
+      };
 
-        setIsReady(true);
-        
-        u.addEventListener("end", () => {
-            setIsReady(false);
-            handleEnd();
+      fetch("/api", options)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch audio");
+          }
+          return response.blob();
         })
+        .then((blob) => {
+          const url = URL.createObjectURL(blob);
+          setAudioUrl(url);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      console.log(text, lastText.current);
+    }
+  }, [text]);
 
-        return () => {
-            synth.cancel();
-        };
-    }, [text]);
+  useEffect(() => {
+    // Play the audio if audioUrl is set
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      audio.play();
+      audio.onended = () => {
+        handleEnd(); // Call the provided handleEnd when audio ends
+        setAudioUrl(null); // Reset audioUrl to null after playing
+      };
+    }
+  }, [audioUrl, handleEnd]);
 
-    useEffect(() => {
-      if (isReady) {
-          handlePlay();
-      }
-  }, [isReady]);
-
-    const handlePlay = () => {
-        if (!isReady) return;
-
-        const synth = window.speechSynthesis;
-
-        if (isPaused) {
-        synth.resume();
-        } else {
-            // Set voice
-            utterance.voice = voice;
-        }
-
-        synth.speak(utterance);
-
-        setIsPaused(false);
-    };
-
-    const handlePause = () => {
-        const synth = window.speechSynthesis;
-
-        synth.pause();
-
-        setIsPaused(true);
-    };
-
-    const handleStop = () => {
-        const synth = window.speechSynthesis;
-
-        synth.cancel();
-
-        setIsPaused(false);
-    };
-
-    return (
-      <div>
-       {/* <button onClick={handlePlay}>{isPaused ? "Resume" : "Play"}</button>
-       <button onClick={handlePause}>Pause</button>
-       <button onClick={handleStop}>Stop</button> */}
-     </div>
-    );
-  }
-
+  return <div></div>;
+}
 
 export default TextToSpeech;

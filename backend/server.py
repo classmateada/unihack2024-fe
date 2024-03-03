@@ -50,22 +50,28 @@ def greeting():
 @app.route('/question', methods=['POST'])
 def question():
     data = request.json
-    
-    
+    print("==> data:", data)    
     with open("company/"+data["company"]+'.txt', 'r') as file:
         company_preprompt = file.read()
+
+    qa_size = len(data["prev-question"])    
+    qa_list = []
+    for i in range(qa_size):
+        qa_list.append({"role": "assistant", "content": data["prev-question"][i]})
+        qa_list.append({"role": "user", "content": data["prev-answer"][i]})
     
-    print(company_preprompt)
+    messages=[
+            {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation). Use the following examples of questions to base the question you ask very closely. Do not generate a question previously asked.\n" + company_preprompt},
+            *qa_list
+        ]
+    # return 'Tell me about a time when you had to deal with a difficult coworker.'
     question_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are an interviewer asking behavioural questions, perform a mock interview with the user. Respond to the user and ask the user a behavioural question. (respond in one sentence and don't add any punctuation). Use the following examples of questions to base the question you ask very closely.\n" + company_preprompt},
-            {"role": "assistant", "content": data["prev-question"]},
-            {"role": "user", "content": data["prev-answer"]}
-        ]
+        messages=messages
     )
 
     question = cutoffRole(question_completion.choices[0].message.content)
+    print("==> question:",question)
     return question
 
 # Given the whole conversation (as a list) starting from the greeting of the interviewer, returns a rating of the interviewee.
