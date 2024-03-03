@@ -27,44 +27,27 @@ export default function Feedback() {
   // Get input from parameters
   useEffect(() => {
     if (rating != null) {
-  //   console.log({rating});
-  //   const sentences = rating.split('.').filter(
-  //     (sentence) => {return !(sentence in ["1", "2", "3", "4"])}
-  //     );
-  //   const re = new RegExp('\w+: ([0-5])/([0-5]) (.*)');
-    
-  //   console.log("It dies here");
-  //   console.log(sentences[0].substring(0, sentences[0].length - 1));
-  //   console.log(sentences[1].substring(0, sentences[1].length - 1));
+    const re = /\d+\.\s+/g;
+    const regex = /(\w+):\s([\d/]+)\s\(([^)]+)\)/g;
+    const result = rating.replace(re, ' ');
+    const matches = [];
+
+    let match;
+    while ((match = regex.exec(result)) !== null) {
+      const [, criteria, rating, comment] = match;
+      matches.push({ criteria, rating, comment });
+    }
+
+    console.log(matches);
+
+    }
+    }, [rating]);
 
 
-  //   const result = sentences.reduce((prev, sentence) => {
-  //       console.log("here: " + sentence)
-  //   const r = sentence.match(re);
-  //       console.log(r)
-  //       return [...prev, [r[1], r[2], r[3]]];
-  //   }, []);
-  // }
 
-  // const sentence = "1. relevance: 1/5 (The response does not directly address the questions asked)";
-  const re = new RegExp('\\d+\\.\\s+([^:]+):\\s+([\\d/]+)\\s+\\((.+)\\)');
-  const match = rating.match(re);
-
-  if (match) {
-    const [, criteria, rating, comment] = match;
-    console.log(criteria); // 'relevance'
-    console.log(rating); // '1/5'
-    console.log(comment); // 'The response does not directly address the questions asked'
-  } else {
-    console.log("No match found");
-  }
-
-}
-  }, [rating]);
-
-  const goToHomePage=()=>{
-    navigate("/");
-  }
+    const goToHomePage=()=>{
+      navigate("/");
+    }
   
   return (
     <div>
