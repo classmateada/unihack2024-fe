@@ -1,5 +1,5 @@
 import TextToVoice from "../components/TextToVoice";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import OpenAI from "openai";
 
@@ -78,7 +78,7 @@ const Settings: React.FC<SettingsProps> = ({
       const rating = await resultPromise.text();
       setResponseText(rating)
       console.log(rating);
-      goToFeedbackPage();
+      goToFeedbackPage(rating);
     };
 
   const stopRecording = async () => {
@@ -275,10 +275,11 @@ const Settings: React.FC<SettingsProps> = ({
   };
 
   const navigate = useNavigate();
-
-  const goToFeedbackPage = () => {
-    navigate("/feedback");
-  };
+  const goToFeedbackPage = (rating) =>
+    navigate({
+      pathname: '/feedback',
+      search: `?rating=${rating}`,
+    });
 
   return (
     <div className="glass p-10 ml-10 h-full rounded-lg">
