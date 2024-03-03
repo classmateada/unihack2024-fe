@@ -109,7 +109,10 @@ const Person = ({ callInterviewer }: { callInterviewer: string }) => {
 
               {/* Overlay icon */}
               <div className="absolute bottom-0 mb-6 flex justify-center w-full">
-                <button className="btn glass btn-circle" onClick={toggleCam}>
+                <button
+                  className="btn glass btn-circle opacity-80"
+                  onClick={toggleCam}
+                >
                   <img src={getCamIcon()} alt="Cam" />
                 </button>
               </div>
