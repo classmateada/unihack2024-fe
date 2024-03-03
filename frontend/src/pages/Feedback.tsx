@@ -37,7 +37,7 @@ export default function Feedback() {
           <div className = "flex justify-center">
             <DataChart/>
           </div>
-    </div>
+      </div>
     </div>
   );
 }
