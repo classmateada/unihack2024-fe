@@ -4,14 +4,25 @@ import axios from "axios";
 const Text = ({
   selectedOption,
   response,
+  chatLog,
+  setChatLog,
 }: {
   selectedOption: string;
+  chatLog: { type: string; message: string }[];
   response: string;
+  setChatLog: React.Dispatch<
+    React.SetStateAction<
+      {
+        type: string;
+        message: string;
+      }[]
+    >
+  >;
 }) => {
   const [inputValue, setInputValue] = useState("");
-  const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
-    []
-  );
+  //   const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
+  //     []
+  //   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,6 +31,9 @@ const Text = ({
   };
 
   useEffect(scrollToBottom, [chatLog]);
+  useEffect(() => {
+    console.log("Chatlog:", chatLog);
+  }, [chatLog]);
 
   useEffect(() => {
     setChatLog((prevChatLog) => [
@@ -109,11 +123,13 @@ const Text = ({
 
   return (
     <div className="mt-8 flex flex-col p-4 w-full max-w-4xl">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 max-h-32">
         <div className="flex space-x-4 items-start">
-          <div className="bg-neutral-600 text-white p-4 rounded-lg">
-            Ready to start the interview? ≽^•⩊•^≼
-          </div>
+          {chatLog.length === 0 && (
+            <div className="bg-neutral-600 text-white p-4 rounded-lg">
+              Ready to start the interview? ≽^•⩊•^≼
+            </div>
+          )}
         </div>
         {chatLog.map(
           (message, index) =>
