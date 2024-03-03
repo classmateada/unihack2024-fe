@@ -5,7 +5,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: "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", // This is the default and can be omitted
+  apiKey: import.meta.env.VITE_NEXT_PUBLIC_OPENAI_API_KEY, // This is the default and can be omitted
 });
 
 // Define the props type for Settings
@@ -18,6 +18,12 @@ interface SettingsProps {
   setCountdownStart: React.Dispatch<React.SetStateAction<boolean>>;
   setCallInterviewer: React.Dispatch<React.SetStateAction<string>>;
   setResponse: React.Dispatch<React.SetStateAction<string>>;
+  isRecording: boolean;
+  isButtonDisabled: boolean;
+  hasInterviewStart: boolean;
+  setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsButtonDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setHasInterviewStart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Settings: React.FC<SettingsProps> = ({
@@ -27,6 +33,12 @@ const Settings: React.FC<SettingsProps> = ({
   setCountdownStart,
   setCallInterviewer,
   setResponse,
+  isRecording,
+  isButtonDisabled,
+  hasInterviewStart,
+  setIsRecording,
+  setIsButtonDisabled,
+  setHasInterviewStart,
 }) => {
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
@@ -35,12 +47,12 @@ const Settings: React.FC<SettingsProps> = ({
   const [answerArr, setAnswerArr] = useState([]);
 
   //   Voice to text code
-  const [isRecording, setIsRecording] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
   const [isBtnRecordDisabled, setIsBtnRecordDisabled] = useState(true);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
   const [blobArr, setBlobArr] = useState([]);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  // const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const [speaking, setSpeaking] = useState("hidden");
 
@@ -204,6 +216,7 @@ const Settings: React.FC<SettingsProps> = ({
 
   const handleStartInterview = () => {
     console.log("Interview Started");
+    setHasInterviewStart(true);
     setCountdownStart(true);
     setCallInterviewer("block flex flex-col opacity-40");
 

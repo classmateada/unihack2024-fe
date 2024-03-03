@@ -9,6 +9,9 @@ export default function Home() {
   const [response, setResponse] = useState<string>("");
   const [countdownStart, setCountdownStart] = useState(false);
   const [callInterviewer, setCallInterviewer] = useState<string>("hidden");
+  const [isRecording, setIsRecording] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [hasInterviewStart, setHasInterviewStart] = useState(false);
 
   const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
     []
@@ -25,7 +28,7 @@ export default function Home() {
   return (
     <div>
       <div>
-        <Person callInterviewer={callInterviewer} />
+        <Person callInterviewer={callInterviewer} isRecording={isRecording} isButtonDisabled={isButtonDisabled} hasInterviewStart={hasInterviewStart} />
         <div className="grid grid-cols-2 px-14 ">
             {/* Need to adjust h-64 to fit screen size */}
           <div className="overflow-y-auto h-64">
@@ -44,6 +47,12 @@ export default function Home() {
             setCountdownStart={setCountdownStart}
             setCallInterviewer={setCallInterviewer}
             setResponse={setResponse}
+            isButtonDisabled={isButtonDisabled}
+            isRecording={isRecording}
+            hasInterviewStart={hasInterviewStart}
+            setIsRecording={setIsRecording}
+            setIsButtonDisabled={setIsButtonDisabled}
+            setHasInterviewStart={setHasInterviewStart}
           />
           <div className="absolute top-[95%] right-[6rem] text-xl flex flex-row">
             <svg

@@ -1,18 +1,33 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { useRef, useState, useEffect } from "react";
 import cn from "./cn";
+import CatWaving from '../../public/Wave-gif.gif'
+import CatStandBy from '../../public/Stand-by.gif'
+import CatTalking from '../../public/Talking-gif.gif'
+import { isContext } from "vm";
 
-const Person = ({ callInterviewer }: { callInterviewer: string }) => {
+interface PersonProps {
+  callInterviewer: string;
+  isRecording: boolean;
+  isButtonDisabled: boolean;
+  hasInterviewStart: boolean;
+
+}
+
+const Person = ({ callInterviewer, isRecording, isButtonDisabled, hasInterviewStart }: PersonProps) => {
   const [isMicOn, setIsMicOn] = useState(false);
   const [isCamOn, setIsCamOn] = useState(false);
 
-  const [isRecording, setIsRecording] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
+  const [hasWaved, setHasWaved] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Define the state with type Blob | null
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef(new MediaRecorder(new MediaStream()));
 
   const [opacityClass, setOpacityClass] = useState("opacity-40");
+
+  const [catState, setCatState] = useState(2);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,6 +37,42 @@ const Person = ({ callInterviewer }: { callInterviewer: string }) => {
     // Cleanup timeout if the component is unmounted within 1 second
     return () => clearTimeout(timer);
   }, []); // Empty dependency array means this effect runs once on mount
+
+  useEffect(() => {
+      /*
+      start interview - clickStart interview button
+      wave (wait for animation to finish) then standy
+      question - isButtonDisabled
+      talking
+      start recording - isRecording
+      standby
+      */
+    // Waving
+    console.log("Has it started" + hasInterviewStart);
+    console.log("Check if button is disabled" + isButtonDisabled);
+    console.log("Is recording working" + isRecording);
+    if (hasInterviewStart && !hasWaved) {
+      setCatState(0);
+      setHasWaved(true);
+      const timer = setTimeout(() => {setCatState(2);}, 7000);
+      return () => clearTimeout(timer);
+    }
+    else if (isRecording) {
+      console.log("Running Standby" + isButtonDisabled);
+        setCatState(2);
+      }
+    // Talking
+    else if (isButtonDisabled) {
+    console.log("Running Talking" + isButtonDisabled);
+    setCatState(1);
+    }
+    // Standby 
+    else {
+    console.log("Running Standby" + isButtonDisabled);
+      setCatState(2);
+    }
+
+  }, [hasInterviewStart, isButtonDisabled, isRecording]);
 
   const toggleMic = () => {
     // Toggle the state immediately to reflect the UI change.
@@ -109,71 +160,55 @@ const Person = ({ callInterviewer }: { callInterviewer: string }) => {
 
               {/* Overlay icon */}
               <div className="absolute bottom-0 mb-6 flex justify-center w-full">
-                <button
-                  className="btn glass btn-circle opacity-50"
-                  onClick={toggleCam}
-                >
+                <button className="btn glass btn-circle" onClick={toggleCam}>
                   <img src={getCamIcon()} alt="Cam" />
                 </button>
               </div>
             </div>
           ) : (
-            <div>
-              <div className="text-white">
-                <p>User</p>
+            <div className="bg-[#605E5E] p-7 rounded-lg flex flex-col items-center space-y-6 w-[30vw] h-[35vh]">
+              <div className="bg-[#D9D9D9] p-3 rounded-full mt-4">
+                <Avatar>
+                  <AvatarImage
+                    alt="User"
+                    src="/User.png"
+                    className="h-[6vw] w-auto"
+                  />
+                  <AvatarFallback>User</AvatarFallback>
+                </Avatar>
               </div>
-              <div className="bg-[#605E5E] p-7 rounded-lg flex flex-col items-center space-y-6 w-[30vw] h-[35vh]">
-                <div className="bg-[#D9D9D9] p-3 rounded-full mt-4">
-                  <Avatar>
-                    <AvatarImage
-                      alt="User"
-                      src="/User.png"
-                      className="h-[6vw] w-auto"
-                    />
-                    <AvatarFallback>User</AvatarFallback>
-                  </Avatar>
-                </div>
-
-                <div className="flex space-x-10">
-                  {/* <button className="btn glass btn-circle" onClick={toggleMic}>
+              <div className="text-white">User</div>
+              <div className="flex space-x-10">
+                {/* <button className="btn glass btn-circle" onClick={toggleMic}>
               <img src={getMicIcon()} alt="Mic" />
             </button> */}
-                  <button
-                    className="btn glass btn-circle mt-4"
-                    onClick={toggleCam}
-                  >
-                    <img src={getCamIcon()} alt="Cam" />
-                  </button>
-                </div>
+                <button className="btn glass btn-circle" onClick={toggleCam}>
+                  <img src={getCamIcon()} alt="Cam" />
+                </button>
               </div>
             </div>
           )}
         </div>
-        <div>
-          <div
-            className={cn(
-              callInterviewer,
-              `text-white duration-0 opacity-40 ${opacityClass}`
-            )}
-          >
-            Cat Interviewer
-          </div>
-          <div
-            className={cn(
-              callInterviewer,
-              `bg-[#605E5E] p-10 rounded-lg items-center space-y-2 w-[30vw] h-[35vh] duration-0 opacity-40 ${opacityClass}`
-            )}
-          >
-            <Avatar>
-              <AvatarImage
-                alt="Interviewer"
-                src="/Interviewer.png"
-                className="h-[10vw] w-auto"
-              />
-              <AvatarFallback>Interviewer</AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
+
+        {/* <div
+          className={cn(
+            callInterviewer,
+            `bg-[#605E5E] p-10 rounded-lg items-center space-y-2 w-[30vw] duration-0 opacity-40 ${opacityClass}`
+          )}
+        >
+          <Avatar>
+            <AvatarImage
+              alt="Interviewer"
+              src="/Interviewer.png"
+              className="h-[10vw] w-auto"
+            />
+            <AvatarFallback>Interviewer</AvatarFallback>
+          </Avatar>
+          <div className="text-white">Cat Interviewer</div>
+        </div> */}
+        
+        <img className={`rounded-lg w-[30vw]`} src={catState === 0 ? CatWaving : catState === 1 ? CatTalking : CatStandBy} alt="catState" />
+
       </div>
     </>
   );
