@@ -1,5 +1,5 @@
 import TextToVoice from "../components/TextToVoice";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import OpenAI from "openai";
 
@@ -56,28 +56,30 @@ const Settings: React.FC<SettingsProps> = ({
 
   const [speaking, setSpeaking] = useState("hidden");
 
-  //   const handleFinishInterview = async () => {
-  //     // Post our answer to the last question
-  //     const url = "http://127.0.0.1:5000/rating";
-  //     const qa_chain = questionArr.reduce((prev, curr, idx) => {
-  //         return [...prev, curr, answerArr[idx]];
-  //     }, [])
+    const handleFinishInterview = async () => {
+      // Post our answer to the last question
+      const url = "http://127.0.0.1:5000/rating";
+      const qa_chain = questionArr.reduce((prev, curr, idx) => {
+          return [...prev, curr, answerArr[idx]];
+      }, [])
 
-  //     const options = {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         "conversation": qa_chain
-  //       }),
-  //     };
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          "conversation": qa_chain
+        }),
+      };
 
-  //     // Get response and next question, should be based on previous q&a
-  //     const resultPromise = await fetch(url, options);
-  //     const rating = await resultPromise.text();
-  //     setResponseText(rating)
-  //   };
+      // Get response and next question, should be based on previous q&a
+      const resultPromise = await fetch(url, options);
+      const rating = await resultPromise.text();
+      setResponseText(rating)
+      console.log(rating);
+      goToFeedbackPage(rating);
+    };
 
   const stopRecording = async () => {
     // Disable the button
@@ -273,10 +275,11 @@ const Settings: React.FC<SettingsProps> = ({
   };
 
   const navigate = useNavigate();
-
-  const goToFeedbackPage = () => {
-    navigate("/feedback");
-  };
+  const goToFeedbackPage = (rating) =>
+    navigate({
+      pathname: '/feedback',
+      search: `?rating=${rating}`,
+    });
 
   return (
     <div className="glass p-10 ml-10 h-full rounded-lg">
@@ -331,7 +334,7 @@ const Settings: React.FC<SettingsProps> = ({
           <button
             className="btn text-white bg-green-500 hover:bg-[#363636] disabled:bg-[#575757] disabled:text-gray-400"
             disabled={isBtnRecordDisabled}
-            onClick={goToFeedbackPage}
+            onClick={handleFinishInterview}
           >
             Finish interview
           </button>
