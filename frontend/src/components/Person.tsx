@@ -174,7 +174,7 @@ const Person = ({
 
   return (
     <>
-      <div className="bg-[#262626] rounded-md flex flex-row justify-center p-28 space-x-6">
+      <div className="bg-[#130f28] rounded-md flex flex-row justify-center p-28 space-x-6">
         <div className="flex flex-col items-center space-y-6">
           {/* Conditional rendering based on camera status */}
           {isCamOn ? (
@@ -189,8 +189,8 @@ const Person = ({
               </div>
             </div>
           ) : (
-            <div className="bg-[#605E5E] p-7 rounded-lg flex flex-col items-center space-y-6 w-[30vw] h-[35vh]">
-              <div className="bg-[#D9D9D9] p-3 rounded-full mt-4">
+            <div className="bg-[#171a67] p-7 rounded-lg flex flex-col items-center space-y-6 w-[30vw] h-[35vh] border border-[#ffd549]">
+              <div className="bg-neutral-400 p-3 rounded-full mt-4">
                 <Avatar>
                   <AvatarImage
                     alt="User"
