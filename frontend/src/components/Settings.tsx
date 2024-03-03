@@ -196,7 +196,7 @@ const Settings: React.FC<SettingsProps> = ({
       getNextQuestion(responseText, userAnswer).then((question) => {
         setResponseText(question);
         setSpeaking("block");
-        console.log("getNext question")
+        console.log("getNext question");
         setChatLog((prevChatLog) => [
           ...prevChatLog,
           { type: "bot", message: question },
@@ -279,7 +279,7 @@ const Settings: React.FC<SettingsProps> = ({
   };
 
   return (
-    <div className="bg-[#1a1a1a] p-8 ml-10">
+    <div className="glass p-10 ml-10 h-full rounded-lg">
       <div className="mt-4">
         <select
           className="select select-bordered select-lg w-full bg-[#2e2e2e]"

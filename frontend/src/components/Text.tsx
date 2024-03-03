@@ -35,15 +35,15 @@ const Text = ({
     console.log("Chatlog:", chatLog);
   }, [chatLog]);
 
-//   useEffect(() => {
-//     setChatLog((prevChatLog) => [
-//       ...prevChatLog,
-//       {
-//         type: "bot",
-//         message: response,
-//       },
-//     ]);
-//   }, []);
+  //   useEffect(() => {
+  //     setChatLog((prevChatLog) => [
+  //       ...prevChatLog,
+  //       {
+  //         type: "bot",
+  //         message: response,
+  //       },
+  //     ]);
+  //   }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -122,12 +122,12 @@ const Text = ({
   };
 
   return (
-    <div className="mt-8 flex flex-col p-4 w-full max-w-4xl">
+    <div className="mt-8 flex flex-col p-4 w-full max-w-4xl h-full rounded-lg">
       <div className="flex flex-col gap-4 max-h-32">
-        <div className="flex space-x-4 items-start">
+        <div className="flex space-x-4 items-start chat chat-start ">
           {chatLog.length === 0 && (
-            <div className="bg-neutral-600 text-white p-4 rounded-lg">
-              Ready to start the interview? ≽^•⩊•^≼
+            <div className="chat-bubble bg-neutral-400 text-white p-4 rounded-lg">
+              Ready to start the interview?
             </div>
           )}
         </div>
@@ -153,7 +153,7 @@ const Text = ({
         )}
       </div>
       <form onSubmit={handleSubmit}>
-        <div className="mt-4 p-4 rounded-lg w-[46%] bottom-0 mb-4 absolute">
+        <div className="mt-4 p-4 rounded-lg w-[45%] bottom-0 mb-4 absolute">
           <label className="input flex items-center gap-2 bg-[#2e2e2e]">
             <input
               type="text"

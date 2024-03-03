@@ -28,15 +28,24 @@ export default function Home() {
   return (
     <div>
       <div>
-        <Person callInterviewer={callInterviewer} isRecording={isRecording} isButtonDisabled={isButtonDisabled} hasInterviewStart={hasInterviewStart} />
+        <p className="flex justify-center bg-[#130f28] font-bold text-4xl pt-4">
+          Virtual Interviewur
+        </p>
+        <Person
+          callInterviewer={callInterviewer}
+          isRecording={isRecording}
+          isButtonDisabled={isButtonDisabled}
+          hasInterviewStart={hasInterviewStart}
+        />
+        <p className="bg-[#130f28] font-medium text-2xl pt-4 ml-20">Chat</p>
         <div className="grid grid-cols-2 px-14 ">
-            {/* Need to adjust h-64 to fit screen size */}
+          {/* Need to adjust h-64 to fit screen size */}
           <div className="overflow-y-auto h-64">
             <Text
               chatLog={chatLog}
               setChatLog={setChatLog}
               selectedOption={selectedOption}
-              response={response} 
+              response={response}
             />
           </div>
 
@@ -54,7 +63,7 @@ export default function Home() {
             setIsButtonDisabled={setIsButtonDisabled}
             setHasInterviewStart={setHasInterviewStart}
           />
-          <div className="absolute top-[95%] right-[6rem] text-xl flex flex-row">
+          <div className="absolute top-[92%] right-[6rem] text-xl flex flex-row">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
