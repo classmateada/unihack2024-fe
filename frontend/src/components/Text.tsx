@@ -1,11 +1,26 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
-const Text = ({ selectedOption }: { selectedOption: string }) => {
+const Text = ({
+  selectedOption,
+  chatLog,
+  setChatLog,
+}: {
+  selectedOption: string;
+  chatLog: { type: string; message: string }[];
+  setChatLog: React.Dispatch<
+    React.SetStateAction<
+      {
+        type: string;
+        message: string;
+      }[]
+    >
+  >;
+}) => {
   const [inputValue, setInputValue] = useState("");
-  const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
-    []
-  );
+  //   const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
+  //     []
+  //   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -14,6 +29,9 @@ const Text = ({ selectedOption }: { selectedOption: string }) => {
   };
 
   useEffect(scrollToBottom, [chatLog]);
+  useEffect(() => {
+    console.log("Chatlog:", chatLog);
+  }, [chatLog]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -93,11 +111,11 @@ const Text = ({ selectedOption }: { selectedOption: string }) => {
 
   return (
     <div className="mt-8 flex flex-col p-4 w-full max-w-4xl">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 max-h-32">
         <div className="flex space-x-4 items-start">
-          <div className="bg-neutral-600 text-white p-4 rounded-lg">
+          {chatLog.length === 0 && <div className="bg-neutral-600 text-white p-4 rounded-lg">
             Ready to start the interview? ≽^•⩊•^≼
-          </div>
+          </div>}
         </div>
         {chatLog.map(
           (message, index) =>

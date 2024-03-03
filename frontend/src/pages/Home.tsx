@@ -9,6 +9,10 @@ export default function Home() {
   const [countdownStart, setCountdownStart] = useState(false);
   const [callInterviewer, setCallInterviewer] = useState<string>("hidden");
 
+  const [chatLog, setChatLog] = useState<{ type: string; message: string }[]>(
+    []
+  );
+
   // Renderer for when the countdown completes
   const Completionist = () => {
     // Set the state to hide the interviewer call-to-action
@@ -22,11 +26,18 @@ export default function Home() {
       <div>
         <Person callInterviewer={callInterviewer} />
         <div className="grid grid-cols-2 px-14 ">
-          <div className="overflow-y-auto h-80">
-            <Text selectedOption={selectedOption} />
+            {/* Need to adjust h-80 to fit screen size */}
+          <div className="overflow-y-auto h-64">
+            <Text
+              chatLog={chatLog}
+              setChatLog={setChatLog}
+              selectedOption={selectedOption}
+            />
           </div>
 
           <Settings
+            setChatLog={setChatLog}
+            selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
             setCountdownStart={setCountdownStart}
             setCallInterviewer={setCallInterviewer}

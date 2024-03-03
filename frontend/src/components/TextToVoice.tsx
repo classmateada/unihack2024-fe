@@ -19,8 +19,8 @@ function TextToSpeech({ text, handleEnd }: TextToSpeechProps) {
         headers: {
           accept: "audio/mpeg",
           "content-type": "application/json",
-          AUTHORIZATION: "b5aba90efdbd4cacb711b473e12ef491",
-          "X-USER-ID": "PSlrafexyYaO25aOgQmVzIoGp1L2", // Replace with your user ID API Key from play.ht
+          AUTHORIZATION: "fe5673a04b6a4414839c40ecbb416075",
+          "X-USER-ID": "Dohdt5XU6gar5lCCf2EOUIAptm32", // Replace with your user ID API Key from play.ht
         },
         body: JSON.stringify({
           text: text,
