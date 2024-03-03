@@ -37,6 +37,9 @@ npm run dev
 
 This will start the Vite server, usually on http://localhost:5173. Open your browser and navigate to this URL to view your app.
 
-## OpenAI API Key
+## API Keys
 
-Create a .env file with your openAIKey in `VITE_NEXT_PUBLIC_OPENAI_API_KEY`
+Create a .env file with your:
+
+- openAIKey in `VITE_NEXT_PUBLIC_OPENAI_API_KEY`
+- play.hs user and pass API keys in `VITE_PLAYHS_USER_ID` and `VITE_PLAYHS_PASS_KEY` respectively

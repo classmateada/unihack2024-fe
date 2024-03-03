@@ -2,6 +2,6 @@
 backend/.env
 venv
 pyvenv
-frontend/.env
 main
-
+.env
+frontend/.env
