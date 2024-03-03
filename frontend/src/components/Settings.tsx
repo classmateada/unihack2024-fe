@@ -5,7 +5,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
-  apiKey: import.meta.env.VITE_NEXT_PUBLIC_OPENAI_API_KEY, // This is the default and can be omitted
+  apiKey: "", // This is the default and can be omitted
 });
 
 // Define the props type for Settings
@@ -13,12 +13,14 @@ interface SettingsProps {
   setSelectedOption: (value: string) => void;
   setCountdownStart: React.Dispatch<React.SetStateAction<boolean>>;
   setCallInterviewer: React.Dispatch<React.SetStateAction<string>>;
+  setResponse: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Settings: React.FC<SettingsProps> = ({
   setSelectedOption,
   setCountdownStart,
   setCallInterviewer,
+  setResponse,
 }) => {
   const [responseText, setResponseText] = useState("");
   const [userAnswer, setUserAnswer] = useState("");
@@ -201,6 +203,7 @@ const Settings: React.FC<SettingsProps> = ({
       .then((data) => {
         console.log("===> data:", data);
         setResponseText(data);
+        setResponse(data);
         setSpeaking("block");
       })
       .catch((error) => {
